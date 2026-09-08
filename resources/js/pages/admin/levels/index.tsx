@@ -1,17 +1,11 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import levels from '@/routes/admin/levels';
+import { Card } from '@/components/ui/card';
 import { dashboard } from '@/routes';
+import levels from '@/routes/admin/levels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type LevelRow = {
@@ -28,7 +22,13 @@ export default function LevelsIndex({
 }: {
     levels: LevelRow[];
 }) {
-    const moveLevel = (index: number, direction: -1 | 1) => {
+    const moveLevel = (
+        event: React.MouseEvent,
+        index: number,
+        direction: -1 | 1,
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
         const reordered = [...levelRows];
         const target = index + direction;
         if (target < 0 || target >= reordered.length) return;
@@ -51,59 +51,22 @@ export default function LevelsIndex({
                 <div className="flex items-center justify-between">
                     <Heading
                         title="Levels"
-                        description="Manage the CEFR levels learners progress through."
+                        description="Choose a level to manage its content."
                     />
                     <Button asChild>
                         <Link href={levels.create()}>New level</Link>
                     </Button>
                 </div>
 
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Order</TableHead>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Days</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">
-                                Actions
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {levelRows.map((level, index) => (
-                            <TableRow key={level.id}>
-                                <TableCell>
-                                    <div className="flex items-center gap-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-6"
-                                            disabled={index === 0}
-                                            onClick={() => moveLevel(index, -1)}
-                                        >
-                                            ↑
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-6"
-                                            disabled={
-                                                index === levelRows.length - 1
-                                            }
-                                            onClick={() => moveLevel(index, 1)}
-                                        >
-                                            ↓
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                    {level.code}
-                                </TableCell>
-                                <TableCell>{level.title}</TableCell>
-                                <TableCell>{level.days_count}</TableCell>
-                                <TableCell>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {levelRows.map((level, index) => (
+                        <Link
+                            key={level.id}
+                            href={levels.show(level.id)}
+                            className="block"
+                        >
+                            <Card className="group hover:border-primary relative aspect-square justify-between overflow-hidden p-5 transition-colors">
+                                <div className="flex items-start justify-between">
                                     <Badge
                                         variant={
                                             level.is_published
@@ -115,40 +78,69 @@ export default function LevelsIndex({
                                             ? 'Published'
                                             : 'Draft'}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
                                     <Button
-                                        asChild
-                                        variant="outline"
-                                        size="sm"
-                                        className="mr-2"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-7 opacity-0 group-hover:opacity-100"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            router.visit(
+                                                levels.edit(level.id).url,
+                                            );
+                                        }}
                                     >
-                                        <Link
-                                            href={levels.days.index(level.id)}
-                                        >
-                                            Days
-                                        </Link>
+                                        <Pencil className="size-4" />
                                     </Button>
-                                    <Button asChild variant="outline" size="sm">
-                                        <Link href={levels.edit(level.id)}>
-                                            Edit
-                                        </Link>
+                                </div>
+
+                                <div>
+                                    <div className="text-4xl font-bold tracking-tight">
+                                        {level.code}
+                                    </div>
+                                    <div className="text-muted-foreground text-sm">
+                                        {level.title}
+                                    </div>
+                                    <div className="text-muted-foreground mt-1 text-xs">
+                                        {level.days_count} days
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-7"
+                                        disabled={index === 0}
+                                        onClick={(event) =>
+                                            moveLevel(event, index, -1)
+                                        }
+                                    >
+                                        <ChevronLeft className="size-4" />
                                     </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {levelRows.length === 0 && (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={6}
-                                    className="text-muted-foreground text-center"
-                                >
-                                    No levels yet.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-7"
+                                        disabled={
+                                            index === levelRows.length - 1
+                                        }
+                                        onClick={(event) =>
+                                            moveLevel(event, index, 1)
+                                        }
+                                    >
+                                        <ChevronRight className="size-4" />
+                                    </Button>
+                                </div>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+
+                {levelRows.length === 0 && (
+                    <p className="text-muted-foreground text-sm">
+                        No levels yet.
+                    </p>
+                )}
             </div>
         </>
     );

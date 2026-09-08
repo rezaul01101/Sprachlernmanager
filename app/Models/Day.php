@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -37,5 +38,13 @@ class Day extends Model
     public function level(): BelongsTo
     {
         return $this->belongsTo(Level::class);
+    }
+
+    /**
+     * @return HasMany<VocabCard, $this>
+     */
+    public function vocabCards(): HasMany
+    {
+        return $this->hasMany(VocabCard::class)->orderBy('sort_order');
     }
 }

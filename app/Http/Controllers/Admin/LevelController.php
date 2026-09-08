@@ -21,6 +21,13 @@ class LevelController extends Controller
         ]);
     }
 
+    public function show(Level $level): Response
+    {
+        return Inertia::render('admin/levels/show', [
+            'level' => $level,
+        ]);
+    }
+
     public function create(): Response
     {
         return Inertia::render('admin/levels/create');
