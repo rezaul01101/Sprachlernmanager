@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DayController;
 use App\Http\Controllers\Admin\LevelController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->scopeBindings()->group(function () {
@@ -21,4 +22,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('levels/{level}/days/{day}/edit', [DayController::class, 'edit'])->name('levels.days.edit');
     Route::put('levels/{level}/days/{day}', [DayController::class, 'update'])->name('levels.days.update');
     Route::delete('levels/{level}/days/{day}', [DayController::class, 'destroy'])->name('levels.days.destroy');
+
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::post('users/{user}/revoke-tokens', [UserController::class, 'revokeTokens'])->name('users.revoke-tokens');
 });
