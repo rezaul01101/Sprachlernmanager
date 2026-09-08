@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property int $id
@@ -20,6 +21,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property bool $is_admin
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -32,7 +34,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -44,6 +46,7 @@ class User extends Authenticatable implements PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
