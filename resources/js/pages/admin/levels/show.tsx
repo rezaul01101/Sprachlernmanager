@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
+import days from '@/routes/admin/levels/days';
 import vocab from '@/routes/admin/levels/vocab';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -67,6 +68,9 @@ export default function LevelShow({ level }: { level: Level }) {
                         >
                             {level.is_published ? 'Published' : 'Draft'}
                         </Badge>
+                        <Button asChild variant="outline">
+                            <Link href={days.index(level.id)}>Day details</Link>
+                        </Button>
                         <Button asChild variant="outline">
                             <Link href={levels.edit(level.id)}>Edit level</Link>
                         </Button>
