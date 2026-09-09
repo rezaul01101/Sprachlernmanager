@@ -48,16 +48,19 @@ dev setup, specifically so the two never collide — different DB credentials,
 different ports, no shared MySQL instance. `.env.docker` gets bind-mounted as
 `/var/www/html/.env` inside the container either way.
 
-**Ports**: defaults are `8090` (app), `5183` (Vite dev), `3317` (MySQL,
-dev-only). These were deliberately picked to avoid the common `8080`/`5173`/
-`3306`/`3307` defaults, which collide with this machine's other running
-Laravel project (`laravel_app`/`laravel_mysql`/etc). Check `docker ps` for
-conflicts before changing them, and note these host-port fallbacks live in
+**Ports**: defaults are `5001` (app), `5183` (Vite dev), `3317` (MySQL,
+dev-only). `5001` was picked (over the more common `8080`) partly to avoid
+colliding with this machine's other running Laravel project, and partly to
+match a specific deployment target this app is meant to be reachable at
+(`http://<server-ip>:5001`). Check `docker ps` for conflicts before changing
+it, and note these host-port fallbacks live in
 `docker-compose.yml`/`docker-compose.override.yml` themselves, not
 `.env.docker` — Compose reads `.env.docker`'s values into containers via
 `env_file:`, but doesn't use it for the compose file's own `${VAR}`
 substitution (no `--env-file` flag is used, by design, so `.env.docker` never
-needs to be named plain `.env` and risk colliding with a host `.env`).
+needs to be named plain `.env` and risk colliding with a host `.env`). To
+change the port, edit the `${APP_PORT:-5001}` fallback in `docker-compose.yml`
+directly.
 
 ## Development
 
@@ -81,7 +84,7 @@ docker compose up -d --build
 - Migrations run automatically on every container start (idempotent —
   `Nothing to migrate` after the first run).
 
-App: `http://localhost:8090`
+App: `http://localhost:5001`
 
 ## Production
 
@@ -109,7 +112,10 @@ Differences from dev:
 
 For an actual remote server, `.env.docker` there holds that server's own
 production secrets — same relative filename, different (never-committed)
-content per machine, standard practice.
+content per machine, standard practice. Set `APP_URL` there to how the app is
+actually reached, e.g. `http://<server-ip>:5001` — this project defaults to
+port `5001` end-to-end (see the port note above) specifically so the app is
+reachable at an address like that with no reverse proxy in front yet.
 
 ## Common commands
 
