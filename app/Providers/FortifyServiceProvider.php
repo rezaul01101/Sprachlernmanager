@@ -4,12 +4,16 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -32,6 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->configureAdminOnlyAccess();
     }
 
     /**
@@ -95,6 +100,31 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by(
                 ($request->input('credential.id') ?: $request->session()->getId()).'|'.$request->ip(),
             );
+        });
+    }
+
+    /**
+     * The web panel is admin-only — every other account is expected to use
+     * the mobile app's API login instead. This runs on the standard Login
+     * event so it catches every Fortify auth path (password, 2FA, passkeys)
+     * rather than just the password form.
+     */
+    private function configureAdminOnlyAccess(): void
+    {
+        Event::listen(function (Login $event): void {
+            if ($event->guard !== 'web' || $event->user->is_admin) {
+                return;
+            }
+
+            Auth::guard('web')->logout();
+
+            $request = request();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                Fortify::username() => __('These credentials do not have access to the admin panel.'),
+            ]);
         });
     }
 }
