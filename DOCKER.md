@@ -1,144 +1,83 @@
 # Docker
 
-Two services: `app` (Nginx + PHP-FPM + Node, all supervised by `supervisord`) and
-`mysql` (the official `mysql:8.4` image). One `Dockerfile` with `development`
-and `production` build targets; three Compose files layer dev/prod behaviour
-on a shared base.
+Two independent compose files, no shared base file:
 
-## Data safety
+- `compose.dev.yml` — full local stack: nginx, php-fpm, mysql, redis, and a
+  node container running the Vite dev server. Source is bind-mounted; edits
+  on the host show up immediately.
+- `compose.prod.yml` — nginx + php-fpm with the code baked into the image
+  (no bind mount), plus redis. No local mysql — `app` joins the external
+  `appnet` network to reach the shared MySQL container (`mysql`) used by
+  other stacks on the host.
 
-MySQL's data directory is **bind-mounted**, not a named volume:
+Both build the same `docker/php/Dockerfile`, using a different `target` per
+service — `dev` (dev's `app` and `node` services), `app` (prod php-fpm),
+`nginx` (prod nginx, built assets baked in).
 
-```yaml
-volumes:
-  - ./docker/data/mysql:/var/lib/mysql
-```
-
-That means the real InnoDB/binlog files live at `docker/data/mysql/` on the
-host filesystem. `docker compose down`, an image rebuild, or `docker rm` never
-touch it — only deleting that folder does. This was verified end-to-end
-(record created → full `docker compose down` removing containers and the
-network → fresh `up` → record still there).
-
-`storage/` (uploads, logs) is bind-mounted the same way in production —
-`docker/data/storage/`.
-
-A `mysql-backup` supervised process (production only) runs `mysqldump` daily
-against the `mysql` service, gzips it to `docker/data/mysql-backups/`, and
-keeps the last 7. Verified restorable (`gunzip -t` + reimport + row-count
-check), not just "a file exists".
-
-Both `docker/data/` and `.env.docker` are gitignored — never commit real
-credentials or the raw data directory.
-
-## First-time setup
+## Dev
 
 ```bash
-cp .env.docker.example .env.docker
+cp .env.example .env
 ```
 
-Edit `.env.docker` and set real values for `DB_PASSWORD`, `MYSQL_PASSWORD`
-(same value — see the comment in the file for why there are two keys),
-`MYSQL_ROOT_PASSWORD`, and `APP_KEY` (dev auto-generates one on first boot;
-production refuses to start without one already set — run
-`php artisan key:generate --show` locally and paste it in).
+Then set, at minimum:
 
-This file is separate from the plain `.env` used by a host-based (e.g. Herd)
-dev setup, specifically so the two never collide — different DB credentials,
-different ports, no shared MySQL instance. `.env.docker` gets bind-mounted as
-`/var/www/html/.env` inside the container either way.
+```
+APP_URL=http://localhost:5001
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=german_word_manager
+DB_USERNAME=sprachbahnhof
+DB_PASSWORD=secret
+REDIS_HOST=redis
+```
 
-**Ports**: defaults are `5001` (app), `5183` (Vite dev), `3317` (MySQL,
-dev-only). `5001` was picked (over the more common `8080`) partly to avoid
-colliding with this machine's other running Laravel project, and partly to
-match a specific deployment target this app is meant to be reachable at
-(`http://<server-ip>:5001`). Check `docker ps` for conflicts before changing
-it, and note these host-port fallbacks live in
-`docker-compose.yml`/`docker-compose.override.yml` themselves, not
-`.env.docker` — Compose reads `.env.docker`'s values into containers via
-`env_file:`, but doesn't use it for the compose file's own `${VAR}`
-substitution (no `--env-file` flag is used, by design, so `.env.docker` never
-needs to be named plain `.env` and risk colliding with a host `.env`). To
-change the port, edit the `${APP_PORT:-5001}` fallback in `docker-compose.yml`
-directly.
-
-## Development
+> `DB_DATABASE`/`DB_USERNAME`/`DB_PASSWORD` above must match `compose.dev.yml`'s
+> `mysql` service exactly — change both places together if you rename them.
 
 ```bash
-docker compose up -d --build
+docker compose -f compose.dev.yml up -d --build
+docker compose -f compose.dev.yml exec app composer install
+docker compose -f compose.dev.yml exec app php artisan migrate
 ```
 
-`docker-compose.override.yml` loads automatically. What you get:
-- The whole repo bind-mounted into the container — edit on the host, see it
-  live.
-- `node_modules` is a **named volume**, not part of that bind mount — npm
-  packages here include native binaries (Rolldown/Vite) built for Linux, and
-  would break if shadowed by a macOS-built host copy. Same reasoning for a
-  fresh `vendor/`: the entrypoint runs `composer install`/`npm install`
-  automatically if either is missing/empty on first boot.
-- Vite's dev server runs *inside* the container (`npx vite --host 0.0.0.0`,
-  not the Herd-aware `vp dev` wrapper, which assumes Herd's TLS is available
-  on the host) — HMR at `http://localhost:5183`.
-- MySQL's port is exposed to the host (`3317` by default) for GUI clients
-  (TablePlus, Sequel Ace, etc).
-- Migrations run automatically on every container start (idempotent —
-  `Nothing to migrate` after the first run).
-
-App: `http://localhost:5001`
+- App: http://localhost:5001
+- Vite dev server (HMR): http://localhost:5173
+- MySQL exposed on host port 3307 (for TablePlus/Sequel Ace etc.)
 
 ## Production
 
-```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-```
-
-Differences from dev:
-- `production` build target — client assets and the Inertia SSR bundle are
-  built at image-build time (`npm run build && npm run build:ssr`), baked
-  into the image. No source bind mount; only `.env.docker` and `storage/` are
-  bind-mounted.
-- `node_modules` is pruned to production dependencies only (`npm prune
-  --omit=dev`) rather than removed entirely — the SSR bundle externalizes
-  `@inertiajs/react` (Vite's default for a Node SSR target) instead of
-  bundling it, so it's genuinely needed at runtime, just not the build-time
-  devDependencies.
-- Config/routes/views are cached on boot.
-- `inertia:start-ssr` and the `mysql-backup` cron-style process run as
-  additional supervised programs.
-- MySQL's port is **not** exposed to the host.
-- Missing `APP_KEY` is a hard failure, not an auto-generate — a container
-  silently minting its own encryption key would break every other instance's
-  encrypted sessions/cookies behind a load balancer.
-
-For an actual remote server, `.env.docker` there holds that server's own
-production secrets — same relative filename, different (never-committed)
-content per machine, standard practice. Set `APP_URL` there to how the app is
-actually reached, e.g. `http://<server-ip>:5001` — this project defaults to
-port `5001` end-to-end (see the port note above) specifically so the app is
-reachable at an address like that with no reverse proxy in front yet.
-
-## Common commands
+The `appnet` network (and the shared `mysql` container on it) must already
+exist on the host before starting this stack — it's created by the other
+stack, not by `compose.prod.yml`.
 
 ```bash
-docker compose logs -f app                 # tail app logs (all supervised processes)
-docker compose exec app bash               # shell into the app container
-docker compose exec app php artisan tinker # tinker against the containerized DB
-docker compose down                        # stop + remove containers (data survives — see above)
+cp .env.example .env
 ```
 
-Restoring a backup:
+Set, at minimum:
+
+```
+APP_URL=http://<server-address>:5001
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=<this app's database>
+DB_USERNAME=<this app's db user>
+DB_PASSWORD=<real password>
+REDIS_HOST=redis
+```
+
 ```bash
-docker compose exec app sh -c 'zcat /var/backups/mysql/<file>.sql.gz' \
-  | docker compose exec -T mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <database>
+docker compose -f compose.prod.yml up -d --build
+docker compose -f compose.prod.yml exec app php artisan migrate --force
 ```
 
-## Why MySQL is a separate service, not inside the app container
-
-The `mysql` service uses Oracle's official multi-arch `mysql:8.4` Docker Hub
-image. An earlier iteration tried installing `mysql-server` via apt directly
-into the app image (matching a literal reading of "same container") — that
-hit two real, unrelated walls: Oracle's raw APT repo signing key was expired
-server-side, and — more fundamentally — **Oracle's APT repo has no `arm64`
-build at all**, only `amd64`. The official Docker Hub image doesn't have
-either problem (multi-arch, no APT trust issues), which is why MySQL runs as
-its own service on a shared `laravel` Docker network instead.
+- App: http://<server-address>:5001
+- No source bind mount — redeploy by rebuilding the image (`up -d --build`)
+  after pulling new code.
+- Uploaded files: `storage_public` is a named volume mounted at
+  `storage/app/public` in `app` and `public/storage` in `nginx` — the two
+  containers share it directly, so there's no `php artisan storage:link`
+  step (no single container has both paths to symlink between).

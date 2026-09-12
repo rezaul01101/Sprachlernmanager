@@ -1,0 +1,72 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: app
+
+    container_name: german_word_manager_app
+
+    restart: unless-stopped
+
+    working_dir: /var/www/html
+
+    env_file:
+      - .env
+
+    depends_on:
+      redis:
+        condition: service_started
+
+    networks:
+      - laravel
+      - appnet
+
+    volumes:
+      - storage_public:/var/www/html/storage/app/public
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: nginx
+
+    container_name: german_word_manager_nginx
+
+    restart: unless-stopped
+
+    ports:
+      - "5001:80"
+
+    depends_on:
+      - app
+
+    networks:
+      - laravel
+
+    volumes:
+      - storage_public:/var/www/html/public/storage
+
+  redis:
+    image: redis:7-alpine
+
+    container_name: german_word_manager_redis
+
+    restart: unless-stopped
+
+    networks:
+      - laravel
+
+    volumes:
+      - redis_data:/data
+
+
+networks:
+  laravel:
+  appnet:
+    external: true
+
+volumes:
+  redis_data:
+  storage_public:
