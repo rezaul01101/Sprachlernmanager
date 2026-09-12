@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\DayController;
 use App\Http\Controllers\Admin\LevelController;
+use App\Http\Controllers\Admin\ListeningController;
+use App\Http\Controllers\Admin\ReadingController;
+use App\Http\Controllers\Admin\SpeakingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VocabController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +24,18 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('levels/{level}/vocab', [VocabController::class, 'index'])->name('levels.vocab.index');
     Route::get('levels/{level}/vocab/{day}', [VocabController::class, 'edit'])->name('levels.vocab.edit');
     Route::put('levels/{level}/vocab/{day}', [VocabController::class, 'update'])->name('levels.vocab.update');
+
+    Route::get('levels/{level}/listening', [ListeningController::class, 'index'])->name('levels.listening.index');
+    Route::get('levels/{level}/listening/{day}', [ListeningController::class, 'edit'])->name('levels.listening.edit');
+    Route::put('levels/{level}/listening/{day}', [ListeningController::class, 'update'])->name('levels.listening.update');
+
+    Route::get('levels/{level}/reading', [ReadingController::class, 'index'])->name('levels.reading.index');
+    Route::get('levels/{level}/reading/{day}', [ReadingController::class, 'edit'])->name('levels.reading.edit');
+    Route::put('levels/{level}/reading/{day}', [ReadingController::class, 'update'])->name('levels.reading.update');
+
+    Route::get('levels/{level}/speaking', [SpeakingController::class, 'index'])->name('levels.speaking.index');
+    Route::get('levels/{level}/speaking/{day}', [SpeakingController::class, 'edit'])->name('levels.speaking.edit');
+    Route::put('levels/{level}/speaking/{day}', [SpeakingController::class, 'update'])->name('levels.speaking.update');
 
     Route::get('levels/{level}/days', [DayController::class, 'index'])->name('levels.days.index');
     Route::get('levels/{level}/days/create', [DayController::class, 'create'])->name('levels.days.create');

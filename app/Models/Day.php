@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -46,5 +47,37 @@ class Day extends Model
     public function vocabCards(): HasMany
     {
         return $this->hasMany(VocabCard::class)->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasOne<ListeningItem, $this>
+     */
+    public function listeningItem(): HasOne
+    {
+        return $this->hasOne(ListeningItem::class);
+    }
+
+    /**
+     * @return HasOne<ReadingItem, $this>
+     */
+    public function readingItem(): HasOne
+    {
+        return $this->hasOne(ReadingItem::class);
+    }
+
+    /**
+     * @return HasOne<SpeakingItem, $this>
+     */
+    public function speakingItem(): HasOne
+    {
+        return $this->hasOne(SpeakingItem::class);
+    }
+
+    /**
+     * @return HasMany<DayProgress, $this>
+     */
+    public function progress(): HasMany
+    {
+        return $this->hasMany(DayProgress::class);
     }
 }

@@ -7,6 +7,9 @@ import { Card } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
 import days from '@/routes/admin/levels/days';
+import listening from '@/routes/admin/levels/listening';
+import reading from '@/routes/admin/levels/reading';
+import speaking from '@/routes/admin/levels/speaking';
 import vocab from '@/routes/admin/levels/vocab';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -31,22 +34,22 @@ export default function LevelShow({ level }: { level: Level }) {
             key: 'listen',
             label: 'Hören',
             icon: Headphones,
-            href: null,
-            enabled: false,
+            href: listening.index(level.id),
+            enabled: true,
         },
         {
             key: 'read',
             label: 'Lesen',
             icon: BookOpen,
-            href: null,
-            enabled: false,
+            href: reading.index(level.id),
+            enabled: true,
         },
         {
             key: 'speak',
             label: 'Sprechen',
             icon: Mic,
-            href: null,
-            enabled: false,
+            href: speaking.index(level.id),
+            enabled: true,
         },
     ] as const;
 

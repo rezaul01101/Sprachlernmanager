@@ -19,6 +19,9 @@ class LevelResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'days' => $this->days_count,
+            'doneDays' => $this->done_days,
+            'status' => $this->status,
+            'enrolled' => $this->enrolled,
         ];
     }
 }
