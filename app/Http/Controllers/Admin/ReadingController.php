@@ -29,6 +29,7 @@ class ReadingController extends Controller
             'level' => $level,
             'day' => $day,
             'item' => $item,
+            'cards' => $day->vocabCards,
         ]);
     }
 
@@ -36,6 +37,7 @@ class ReadingController extends Controller
     {
         $validated = $request->validate([
             'instruction' => ['required', 'string'],
+            'article_url' => ['nullable', 'url', 'max:2048'],
             'passage' => ['required', 'string'],
             'question' => ['required', 'string', 'max:255'],
             'options' => ['present', 'array'],
@@ -47,6 +49,7 @@ class ReadingController extends Controller
         DB::transaction(function () use ($day, $validated) {
             $item = $day->readingItem()->updateOrCreate([], [
                 'instruction' => $validated['instruction'],
+                'article_url' => $validated['article_url'] ?? null,
                 'passage' => $validated['passage'],
                 'question' => $validated['question'],
             ]);

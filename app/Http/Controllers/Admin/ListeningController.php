@@ -29,6 +29,7 @@ class ListeningController extends Controller
             'level' => $level,
             'day' => $day,
             'item' => $item,
+            'cards' => $day->vocabCards,
         ]);
     }
 
@@ -36,6 +37,8 @@ class ListeningController extends Controller
     {
         $validated = $request->validate([
             'type' => ['required', 'in:audio,video'],
+            'video_url' => ['nullable', 'url', 'max:2048', 'required_if:type,video'],
+            'script' => ['nullable', 'string'],
             'title' => ['required', 'string', 'max:255'],
             'duration_label' => ['required', 'string', 'max:255'],
             'question' => ['required', 'string', 'max:255'],
@@ -48,6 +51,8 @@ class ListeningController extends Controller
         DB::transaction(function () use ($day, $validated) {
             $item = $day->listeningItem()->updateOrCreate([], [
                 'type' => $validated['type'],
+                'video_url' => $validated['video_url'] ?? null,
+                'script' => $validated['script'] ?? null,
                 'title' => $validated['title'],
                 'duration_label' => $validated['duration_label'],
                 'question' => $validated['question'],

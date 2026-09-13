@@ -12,12 +12,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property int $day_id
  * @property string $instruction
+ * @property string|null $article_url
  * @property string $passage
  * @property string $question
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  */
-#[Fillable(['day_id', 'instruction', 'passage', 'question'])]
+#[Fillable(['day_id', 'instruction', 'article_url', 'passage', 'question'])]
 class ReadingItem extends Model
 {
     /**

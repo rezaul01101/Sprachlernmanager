@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
+import days from '@/routes/admin/levels/days';
 import vocab from '@/routes/admin/levels/vocab';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -63,7 +64,7 @@ VocabIndex.layout = (props: { level: Level }) => ({
     breadcrumbs: [
         { title: 'Dashboard', href: dashboard() },
         { title: 'Levels', href: levels.index() },
-        { title: props.level.code, href: levels.show(props.level.id) },
+        { title: props.level.code, href: days.index(props.level.id) },
         { title: 'Vocab', href: vocab.index(props.level.id) },
     ] satisfies BreadcrumbItem[],
 });

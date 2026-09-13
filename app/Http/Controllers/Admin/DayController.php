@@ -21,6 +21,14 @@ class DayController extends Controller
         ]);
     }
 
+    public function show(Level $level, Day $day): Response
+    {
+        return Inertia::render('admin/days/show', [
+            'level' => $level,
+            'day' => $day->loadCount('vocabCards')->loadExists(['listeningItem', 'readingItem', 'speakingItem']),
+        ]);
+    }
+
     public function create(Level $level): Response
     {
         return Inertia::render('admin/days/create', [

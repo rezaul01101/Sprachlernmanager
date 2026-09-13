@@ -27,16 +27,6 @@ class LevelControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_admin_can_view_a_levels_show_page()
-    {
-        $admin = User::factory()->create(['is_admin' => true]);
-        $level = Level::factory()->create();
-
-        $response = $this->actingAs($admin)->get(route('admin.levels.show', $level));
-
-        $response->assertOk();
-    }
-
     public function test_admin_can_view_levels_index()
     {
         $admin = User::factory()->create(['is_admin' => true]);

@@ -1,15 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Pencil } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Card } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
 import days from '@/routes/admin/levels/days';
@@ -50,27 +44,15 @@ export default function DaysIndex({
                     </Button>
                 </div>
 
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Day</TableHead>
-                            <TableHead>Focus</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">
-                                Actions
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {dayRows.map((day) => (
-                            <TableRow key={day.id}>
-                                <TableCell className="font-medium">
-                                    {day.day_number}
-                                </TableCell>
-                                <TableCell className="max-w-md truncate">
-                                    {day.focus_text}
-                                </TableCell>
-                                <TableCell>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    {dayRows.map((day) => (
+                        <Link
+                            key={day.id}
+                            href={days.show([level.id, day.id])}
+                            className="block"
+                        >
+                            <Card className="group hover:border-primary relative aspect-square justify-between overflow-hidden p-4 transition-colors">
+                                <div className="flex items-start justify-between">
                                     <Badge
                                         variant={
                                             day.is_published
@@ -82,30 +64,40 @@ export default function DaysIndex({
                                             ? 'Published'
                                             : 'Draft'}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button asChild variant="outline" size="sm">
-                                        <Link
-                                            href={days.edit([level.id, day.id])}
-                                        >
-                                            Edit
-                                        </Link>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-7 opacity-0 group-hover:opacity-100"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            router.visit(
+                                                days.edit([level.id, day.id])
+                                                    .url,
+                                            );
+                                        }}
+                                    >
+                                        <Pencil className="size-4" />
                                     </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {dayRows.length === 0 && (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={4}
-                                    className="text-muted-foreground text-center"
-                                >
-                                    No days yet.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                                </div>
+
+                                <div>
+                                    <div className="text-3xl font-bold tracking-tight">
+                                        {day.day_number}
+                                    </div>
+                                    <div className="text-muted-foreground line-clamp-2 text-sm">
+                                        {day.focus_text}
+                                    </div>
+                                </div>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+
+                {dayRows.length === 0 && (
+                    <p className="text-muted-foreground text-sm">
+                        No days yet.
+                    </p>
+                )}
             </div>
         </>
     );

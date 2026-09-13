@@ -29,6 +29,7 @@ class SpeakingController extends Controller
             'level' => $level,
             'day' => $day,
             'item' => $item,
+            'cards' => $day->vocabCards,
         ]);
     }
 

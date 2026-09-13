@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
+import days from '@/routes/admin/levels/days';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type LevelRow = {
@@ -62,7 +63,7 @@ export default function LevelsIndex({
                     {levelRows.map((level, index) => (
                         <Link
                             key={level.id}
-                            href={levels.show(level.id)}
+                            href={days.index(level.id)}
                             className="block"
                         >
                             <Card className="group hover:border-primary relative aspect-square justify-between overflow-hidden p-5 transition-colors">

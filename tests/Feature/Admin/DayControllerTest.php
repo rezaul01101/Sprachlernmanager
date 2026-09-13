@@ -69,6 +69,29 @@ class DayControllerTest extends TestCase
         $response->assertNotFound();
     }
 
+    public function test_admin_can_view_a_days_show_page()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $level = Level::factory()->create();
+        $day = Day::factory()->create(['level_id' => $level->id]);
+
+        $response = $this->actingAs($admin)->get(route('admin.levels.days.show', [$level, $day]));
+
+        $response->assertOk();
+    }
+
+    public function test_a_days_show_page_for_a_day_from_another_level_returns_404()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $levelA = Level::factory()->create();
+        $levelB = Level::factory()->create();
+        $day = Day::factory()->create(['level_id' => $levelA->id]);
+
+        $response = $this->actingAs($admin)->get(route('admin.levels.days.show', [$levelB, $day]));
+
+        $response->assertNotFound();
+    }
+
     public function test_admin_can_delete_a_day()
     {
         $admin = User::factory()->create(['is_admin' => true]);

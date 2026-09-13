@@ -37,6 +37,8 @@ class DayDetailResource extends JsonResource
             ]),
             'listening' => $this->listeningItem ? [
                 'type' => $this->listeningItem->type,
+                'videoUrl' => $this->listeningItem->video_url,
+                'script' => $this->listeningItem->script,
                 'title' => $this->listeningItem->title,
                 'durationLabel' => $this->listeningItem->duration_label,
                 'question' => $this->listeningItem->question,
@@ -44,6 +46,7 @@ class DayDetailResource extends JsonResource
             ] : null,
             'reading' => $this->readingItem ? [
                 'instruction' => $this->readingItem->instruction,
+                'articleUrl' => $this->readingItem->article_url,
                 'passage' => $this->readingItem->passage,
                 'question' => $this->readingItem->question,
                 'options' => $this->mapOptions($this->readingItem->options),

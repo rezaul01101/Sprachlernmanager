@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import { dashboard } from '@/routes';
 import levels from '@/routes/admin/levels';
+import days from '@/routes/admin/levels/days';
 import reading from '@/routes/admin/levels/reading';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -61,7 +62,7 @@ ReadingIndex.layout = (props: { level: Level }) => ({
     breadcrumbs: [
         { title: 'Dashboard', href: dashboard() },
         { title: 'Levels', href: levels.index() },
-        { title: props.level.code, href: levels.show(props.level.id) },
+        { title: props.level.code, href: days.index(props.level.id) },
         { title: 'Lesen', href: reading.index(props.level.id) },
     ] satisfies BreadcrumbItem[],
 });
