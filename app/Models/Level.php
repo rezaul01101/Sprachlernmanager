@@ -18,9 +18,9 @@ use Illuminate\Support\Carbon;
  * @property bool $is_published
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read int|null $done_days Set by Api\LevelController@index for the authenticated user; not persisted.
- * @property-read string|null $status Set by Api\LevelController@index for the authenticated user; not persisted.
- * @property-read bool|null $enrolled Set by Api\LevelController@index for the authenticated user; not persisted.
+ * @property-read int|null $done_days Set by LevelProgressService::publishedLevelsWithStatusFor() for the authenticated user; not persisted.
+ * @property-read string|null $status Set by LevelProgressService::publishedLevelsWithStatusFor() for the authenticated user; not persisted.
+ * @property-read bool|null $enrolled Set by LevelProgressService::publishedLevelsWithStatusFor() for the authenticated user; not persisted.
  */
 #[Fillable(['code', 'title', 'description', 'sort_order', 'is_published'])]
 class Level extends Model
