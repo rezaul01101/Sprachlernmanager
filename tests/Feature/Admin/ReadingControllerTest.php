@@ -19,12 +19,11 @@ class ReadingControllerTest extends TestCase
         $day = Day::factory()->create(['level_id' => $level->id]);
 
         $response = $this->actingAs($admin)->put(route('admin.levels.reading.update', [$level, $day]), [
-            'instruction' => 'Lesen Sie den Text und beantworten Sie die Frage.',
+            'instruction' => 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
             'article_url' => 'https://example.com/article',
             'passage' => 'Frau Keller wohnt seit drei Monaten in Berlin.',
-            'question' => 'Warum geht Frau Keller zum Bürgeramt?',
-            'options' => [
-                ['text' => 'Um ihren Wohnsitz anzumelden', 'is_correct' => true, 'explanation' => null],
+            'words' => [
+                ['word' => 'der Wohnsitz', 'pronounce' => 'dehr VOHN-zits', 'meaning' => 'residence'],
             ],
         ]);
 
@@ -32,6 +31,9 @@ class ReadingControllerTest extends TestCase
         $this->assertDatabaseHas('reading_items', [
             'day_id' => $day->id,
             'article_url' => 'https://example.com/article',
+            'words' => json_encode([
+                ['word' => 'der Wohnsitz', 'pronounce' => 'dehr VOHN-zits', 'meaning' => 'residence'],
+            ]),
         ]);
     }
 
@@ -42,12 +44,9 @@ class ReadingControllerTest extends TestCase
         $day = Day::factory()->create(['level_id' => $level->id]);
 
         $response = $this->actingAs($admin)->put(route('admin.levels.reading.update', [$level, $day]), [
-            'instruction' => 'Lesen Sie den Text und beantworten Sie die Frage.',
+            'instruction' => 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
             'passage' => 'Frau Keller wohnt seit drei Monaten in Berlin.',
-            'question' => 'Warum geht Frau Keller zum Bürgeramt?',
-            'options' => [
-                ['text' => 'Um ihren Wohnsitz anzumelden', 'is_correct' => true],
-            ],
+            'words' => [],
         ]);
 
         $response->assertRedirect(route('admin.levels.reading.edit', [$level, $day]));
@@ -64,15 +63,35 @@ class ReadingControllerTest extends TestCase
         $day = Day::factory()->create(['level_id' => $level->id]);
 
         $response = $this->actingAs($admin)->put(route('admin.levels.reading.update', [$level, $day]), [
-            'instruction' => 'Lesen Sie den Text und beantworten Sie die Frage.',
+            'instruction' => 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
             'article_url' => 'not-a-url',
             'passage' => 'Frau Keller wohnt seit drei Monaten in Berlin.',
-            'question' => 'Warum geht Frau Keller zum Bürgeramt?',
-            'options' => [
-                ['text' => 'Um ihren Wohnsitz anzumelden', 'is_correct' => true],
-            ],
+            'words' => [],
         ]);
 
         $response->assertSessionHasErrors('article_url');
+    }
+
+    public function test_words_are_optional_per_entry()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $level = Level::factory()->create();
+        $day = Day::factory()->create(['level_id' => $level->id]);
+
+        $response = $this->actingAs($admin)->put(route('admin.levels.reading.update', [$level, $day]), [
+            'instruction' => 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
+            'passage' => 'Frau Keller wohnt seit drei Monaten in Berlin.',
+            'words' => [
+                ['word' => 'der Termin'],
+            ],
+        ]);
+
+        $response->assertRedirect(route('admin.levels.reading.edit', [$level, $day]));
+        $this->assertDatabaseHas('reading_items', [
+            'day_id' => $day->id,
+            'words' => json_encode([
+                ['word' => 'der Termin', 'pronounce' => null, 'meaning' => null],
+            ]),
+        ]);
     }
 }

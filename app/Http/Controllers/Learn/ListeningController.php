@@ -31,7 +31,7 @@ class ListeningController extends Controller
         return Inertia::render('learn/lessons/listening', [
             'level' => $day->level,
             'day' => ['id' => $day->id, 'day_number' => $day->day_number, 'focus_text' => $day->focus_text],
-            'listeningItem' => $day->listeningItem,
+            'listeningItems' => $day->listeningItems,
             'vocabCards' => $day->vocabCards,
         ]);
     }

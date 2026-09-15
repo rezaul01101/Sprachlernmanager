@@ -30,6 +30,11 @@ export function VocabReferencePanel({ cards }: { cards: VocabCard[] }) {
                             >
                                 <div className="text-sm font-semibold">
                                     {card.word}
+                                    {card.pronounce && (
+                                        <span className="text-muted-foreground ml-1 font-normal">
+                                            ({card.pronounce})
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-primary text-xs">
                                     {card.translation_en}

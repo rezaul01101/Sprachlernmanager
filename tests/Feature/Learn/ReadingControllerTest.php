@@ -32,7 +32,9 @@ class ReadingControllerTest extends TestCase
             'instruction' => 'Lies den Text.',
             'article_url' => 'https://example.com/article',
             'passage' => 'Hallo, wie geht es dir?',
-            'question' => 'Was bedeutet das?',
+            'words' => [
+                ['word' => 'hallo', 'pronounce' => 'ha-LOH', 'meaning' => 'hello'],
+            ],
         ]);
 
         $response = $this->actingAs($user)->get(route('learn.lessons.reading', ['A1', 1]));
@@ -41,7 +43,8 @@ class ReadingControllerTest extends TestCase
         $response->assertInertia(fn (Assert $page) => $page
             ->component('learn/lessons/reading')
             ->where('readingItem.passage', 'Hallo, wie geht es dir?')
-            ->where('readingItem.article_url', 'https://example.com/article'),
+            ->where('readingItem.article_url', 'https://example.com/article')
+            ->where('readingItem.words.0.word', 'hallo'),
         );
     }
 

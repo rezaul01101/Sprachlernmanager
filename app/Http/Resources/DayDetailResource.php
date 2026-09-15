@@ -3,8 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Day;
-use App\Models\ListeningOption;
-use App\Models\ReadingOption;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,50 +28,30 @@ class DayDetailResource extends JsonResource
             'progress' => $this->progress,
             'vocab' => $this->vocabCards->map(fn ($card) => [
                 'word' => $card->word,
+                'pronounce' => $card->pronounce,
                 'tag' => $card->tag,
                 'translation_en' => $card->translation_en,
                 'translation_bn' => $card->translation_bn,
                 'example' => $card->example,
             ]),
-            'listening' => $this->listeningItem ? [
-                'type' => $this->listeningItem->type,
-                'videoUrl' => $this->listeningItem->video_url,
-                'script' => $this->listeningItem->script,
-                'title' => $this->listeningItem->title,
-                'durationLabel' => $this->listeningItem->duration_label,
-                'question' => $this->listeningItem->question,
-                'options' => $this->mapOptions($this->listeningItem->options),
-            ] : null,
+            'listening' => $this->listeningItems->map(fn ($item) => [
+                'type' => $item->type,
+                'videoUrl' => $item->video_url,
+                'script' => $item->script,
+                'title' => $item->title,
+                'durationLabel' => $item->duration_label,
+                'words' => $item->words ?? [],
+            ]),
             'reading' => $this->readingItem ? [
                 'instruction' => $this->readingItem->instruction,
                 'articleUrl' => $this->readingItem->article_url,
                 'passage' => $this->readingItem->passage,
-                'question' => $this->readingItem->question,
-                'options' => $this->mapOptions($this->readingItem->options),
+                'words' => $this->readingItem->words ?? [],
             ] : null,
             'speaking' => $this->speakingItem ? [
                 'targetSentence' => $this->speakingItem->target_sentence,
                 'aiLines' => $this->speakingItem->aiLines->pluck('text'),
             ] : null,
         ];
-    }
-
-    /**
-     * @param  iterable<ListeningOption|ReadingOption>  $options
-     * @return array<int, array<string, mixed>>
-     */
-    private function mapOptions(iterable $options): array
-    {
-        $mapped = [];
-
-        foreach ($options as $option) {
-            $mapped[] = [
-                'text' => $option->text,
-                'correct' => $option->is_correct,
-                'explanation' => $option->explanation ?? '',
-            ];
-        }
-
-        return $mapped;
     }
 }

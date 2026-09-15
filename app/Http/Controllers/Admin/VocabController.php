@@ -35,6 +35,7 @@ class VocabController extends Controller
         $validated = $request->validate([
             'cards' => ['present', 'array'],
             'cards.*.word' => ['required', 'string', 'max:255'],
+            'cards.*.pronounce' => ['nullable', 'string', 'max:255'],
             'cards.*.tag' => ['nullable', 'string', 'max:255'],
             'cards.*.translation_en' => ['required', 'string', 'max:255'],
             'cards.*.translation_bn' => ['nullable', 'string', 'max:255'],
@@ -47,6 +48,7 @@ class VocabController extends Controller
             foreach ($validated['cards'] as $index => $card) {
                 $day->vocabCards()->create([
                     'word' => $card['word'],
+                    'pronounce' => $card['pronounce'] ?? null,
                     'tag' => $card['tag'] ?? null,
                     'translation_en' => $card['translation_en'],
                     'translation_bn' => $card['translation_bn'] ?? null,

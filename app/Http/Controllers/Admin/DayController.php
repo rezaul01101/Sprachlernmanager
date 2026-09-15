@@ -25,7 +25,7 @@ class DayController extends Controller
     {
         return Inertia::render('admin/days/show', [
             'level' => $level,
-            'day' => $day->loadCount('vocabCards')->loadExists(['listeningItem', 'readingItem', 'speakingItem']),
+            'day' => $day->loadCount(['vocabCards', 'listeningItems'])->loadExists(['readingItem', 'speakingItem']),
         ]);
     }
 

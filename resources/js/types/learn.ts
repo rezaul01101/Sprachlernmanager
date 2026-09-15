@@ -18,17 +18,17 @@ export type LearnDay = {
 export type VocabCard = {
     id: number;
     word: string;
+    pronounce: string | null;
     tag: string | null;
     translation_en: string;
     translation_bn: string | null;
     example: string | null;
 };
 
-export type McOption = {
-    id: number;
-    text: string;
-    is_correct: boolean;
-    explanation: string | null;
+export type ListeningWord = {
+    word: string;
+    pronounce: string | null;
+    meaning: string | null;
 };
 
 export type ListeningItem = {
@@ -38,8 +38,7 @@ export type ListeningItem = {
     script: string | null;
     title: string;
     duration_label: string;
-    question: string;
-    options: McOption[];
+    words: ListeningWord[];
 };
 
 export type ReadingItem = {
@@ -47,8 +46,7 @@ export type ReadingItem = {
     instruction: string;
     article_url: string | null;
     passage: string;
-    question: string;
-    options: McOption[];
+    words: ListeningWord[];
 };
 
 export type SpeakingAiLine = {

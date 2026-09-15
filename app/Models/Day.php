@@ -50,11 +50,11 @@ class Day extends Model
     }
 
     /**
-     * @return HasOne<ListeningItem, $this>
+     * @return HasMany<ListeningItem, $this>
      */
-    public function listeningItem(): HasOne
+    public function listeningItems(): HasMany
     {
-        return $this->hasOne(ListeningItem::class);
+        return $this->hasMany(ListeningItem::class)->orderBy('sort_order');
     }
 
     /**

@@ -15,7 +15,7 @@ type Level = {
 type Day = {
     id: number;
     day_number: number;
-    listening_item_exists: boolean;
+    listening_items_count: number;
 };
 
 export default function ListeningIndex({
@@ -41,14 +41,16 @@ export default function ListeningIndex({
                             key={day.id}
                             href={listening.edit([level.id, day.id])}
                             className={`hover:border-primary flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg border text-sm font-medium transition-colors ${
-                                day.listening_item_exists
+                                day.listening_items_count > 0
                                     ? 'border-primary/50 bg-primary/5'
                                     : 'border-input'
                             }`}
                         >
                             <span>{day.day_number}</span>
                             <span className="text-muted-foreground text-[10px]">
-                                {day.listening_item_exists ? 'Set' : '—'}
+                                {day.listening_items_count > 0
+                                    ? `${day.listening_items_count} videos`
+                                    : '—'}
                             </span>
                         </Link>
                     ))}

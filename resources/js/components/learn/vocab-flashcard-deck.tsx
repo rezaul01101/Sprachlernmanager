@@ -78,6 +78,11 @@ export function VocabFlashcardDeck({
                 className="bg-card flex aspect-[4/3] w-full max-w-sm flex-col items-center justify-center gap-1 rounded-2xl border p-8 text-center shadow-sm"
             >
                 <div className="text-2xl font-bold">{current.word}</div>
+                {current.pronounce && (
+                    <div className="text-muted-foreground text-sm">
+                        {current.pronounce}
+                    </div>
+                )}
                 {current.tag && (
                     <div className="text-muted-foreground text-xs tracking-wide uppercase">
                         {current.tag}

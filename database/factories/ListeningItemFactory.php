@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Day;
-use App\Models\VocabCard;
+use App\Models\ListeningItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<VocabCard>
+ * @extends Factory<ListeningItem>
  */
-class VocabCardFactory extends Factory
+class ListeningItemFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,12 +20,12 @@ class VocabCardFactory extends Factory
     {
         return [
             'day_id' => Day::factory(),
-            'word' => fake()->word(),
-            'pronounce' => null,
-            'tag' => 'Substantiv · n.',
-            'translation_en' => fake()->word(),
-            'translation_bn' => null,
-            'example' => fake()->sentence(),
+            'type' => 'video',
+            'video_url' => null,
+            'script' => null,
+            'title' => fake()->sentence(3),
+            'duration_label' => '00:00',
+            'words' => [],
             'sort_order' => fake()->unique()->numberBetween(1, 1000),
         ];
     }

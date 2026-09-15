@@ -17,18 +17,16 @@ class ListeningController extends Controller
     {
         return Inertia::render('admin/listening/index', [
             'level' => $level,
-            'days' => $level->days()->withExists('listeningItem')->orderBy('day_number')->get(),
+            'days' => $level->days()->withCount('listeningItems')->orderBy('day_number')->get(),
         ]);
     }
 
     public function edit(Level $level, Day $day): Response
     {
-        $item = $day->listeningItem()->with('options')->first();
-
         return Inertia::render('admin/listening/edit', [
             'level' => $level,
             'day' => $day,
-            'item' => $item,
+            'items' => $day->listeningItems,
             'cards' => $day->vocabCards,
         ]);
     }
@@ -36,35 +34,33 @@ class ListeningController extends Controller
     public function update(Request $request, Level $level, Day $day): RedirectResponse
     {
         $validated = $request->validate([
-            'type' => ['required', 'in:audio,video'],
-            'video_url' => ['nullable', 'url', 'max:2048', 'required_if:type,video'],
-            'script' => ['nullable', 'string'],
-            'title' => ['required', 'string', 'max:255'],
-            'duration_label' => ['required', 'string', 'max:255'],
-            'question' => ['required', 'string', 'max:255'],
-            'options' => ['present', 'array'],
-            'options.*.text' => ['required', 'string', 'max:255'],
-            'options.*.is_correct' => ['boolean'],
-            'options.*.explanation' => ['nullable', 'string'],
+            'items' => ['present', 'array'],
+            'items.*.type' => ['required', 'in:audio,video'],
+            'items.*.video_url' => ['nullable', 'url', 'max:2048', 'required_if:items.*.type,video'],
+            'items.*.script' => ['nullable', 'string'],
+            'items.*.title' => ['required', 'string', 'max:255'],
+            'items.*.duration_label' => ['required', 'string', 'max:255'],
+            'items.*.words' => ['present', 'array'],
+            'items.*.words.*.word' => ['required', 'string', 'max:255'],
+            'items.*.words.*.pronounce' => ['nullable', 'string', 'max:255'],
+            'items.*.words.*.meaning' => ['nullable', 'string', 'max:255'],
         ]);
 
         DB::transaction(function () use ($day, $validated) {
-            $item = $day->listeningItem()->updateOrCreate([], [
-                'type' => $validated['type'],
-                'video_url' => $validated['video_url'] ?? null,
-                'script' => $validated['script'] ?? null,
-                'title' => $validated['title'],
-                'duration_label' => $validated['duration_label'],
-                'question' => $validated['question'],
-            ]);
+            $day->listeningItems()->delete();
 
-            $item->options()->delete();
-
-            foreach ($validated['options'] as $index => $option) {
-                $item->options()->create([
-                    'text' => $option['text'],
-                    'is_correct' => $option['is_correct'] ?? false,
-                    'explanation' => $option['explanation'] ?? null,
+            foreach ($validated['items'] as $index => $item) {
+                $day->listeningItems()->create([
+                    'type' => $item['type'],
+                    'video_url' => $item['video_url'] ?? null,
+                    'script' => $item['script'] ?? null,
+                    'title' => $item['title'],
+                    'duration_label' => $item['duration_label'],
+                    'words' => array_map(fn (array $word) => [
+                        'word' => $word['word'],
+                        'pronounce' => $word['pronounce'] ?? null,
+                        'meaning' => $word['meaning'] ?? null,
+                    ], $item['words']),
                     'sort_order' => $index + 1,
                 ]);
             }

@@ -25,7 +25,7 @@ type Day = {
     focus_text: string;
     is_published: boolean;
     vocab_cards_count: number;
-    listening_item_exists: boolean;
+    listening_items_count: number;
     reading_item_exists: boolean;
     speaking_item_exists: boolean;
 };
@@ -48,8 +48,11 @@ export default function DayShow({ level, day }: { level: Level; day: Day }) {
             label: 'Hören',
             icon: Headphones,
             href: listening.edit([level.id, day.id]),
-            status: day.listening_item_exists ? 'Added' : 'Not added',
-            filled: day.listening_item_exists,
+            status:
+                day.listening_items_count > 0
+                    ? `${day.listening_items_count} item${day.listening_items_count === 1 ? '' : 's'}`
+                    : 'No items yet',
+            filled: day.listening_items_count > 0,
         },
         {
             key: 'read',

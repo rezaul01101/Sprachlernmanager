@@ -1,12 +1,11 @@
 import { Head, router } from '@inertiajs/react';
-import { Globe, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, Globe, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
 import VocabCardsEditor, {
     type VocabCardForm,
 } from '@/components/vocab-cards-editor';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -18,6 +17,14 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { dashboard } from '@/routes';
@@ -36,44 +43,41 @@ type Day = {
     day_number: number;
 };
 
-type OptionForm = {
-    text: string;
-    is_correct: boolean;
-    explanation: string;
+type WordForm = {
+    word: string;
+    pronounce: string;
+    meaning: string;
 };
 
 type ReadingForm = {
     instruction: string;
     article_url: string;
     passage: string;
-    question: string;
-    options: OptionForm[];
+    words: WordForm[];
 };
 
 type ReadingItem = {
     instruction: string;
     article_url: string | null;
     passage: string;
-    question: string;
-    options: {
-        text: string;
-        is_correct: boolean;
-        explanation: string | null;
+    words: {
+        word: string;
+        pronounce: string | null;
+        meaning: string | null;
     }[];
 };
 
-const emptyOption = (): OptionForm => ({
-    text: '',
-    is_correct: false,
-    explanation: '',
+const emptyWord = (): WordForm => ({
+    word: '',
+    pronounce: '',
+    meaning: '',
 });
 
 const emptyForm = (): ReadingForm => ({
-    instruction: 'Lesen Sie den Text und beantworten Sie die Frage.',
+    instruction: 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
     article_url: '',
     passage: '',
-    question: '',
-    options: [emptyOption()],
+    words: [emptyWord()],
 });
 
 /** Same client-side-only parsing approach as the vocab importer — see admin/vocab/edit.tsx. */
@@ -88,23 +92,25 @@ function parseReadingInput(text: string): ReadingForm {
     const asString = (input: unknown): string =>
         typeof input === 'string' ? input : '';
 
-    if (!asString(item.passage) || !asString(item.question)) {
-        throw new Error('Expected "passage" and "question" fields.');
+    if (!asString(item.passage)) {
+        throw new Error('Expected a "passage" field.');
     }
 
-    const options = Array.isArray(item.options) ? item.options : [];
+    const words = Array.isArray(item.words) ? item.words : [];
 
     return {
         instruction: asString(item.instruction) || emptyForm().instruction,
         article_url: asString(item.article_url),
         passage: asString(item.passage),
-        question: asString(item.question),
-        options: options.map((raw) => {
-            const option = (raw ?? {}) as Record<string, unknown>;
+        words: words.map((raw, index) => {
+            const word = (raw ?? {}) as Record<string, unknown>;
+            if (!asString(word.word)) {
+                throw new Error(`Word at index ${index} is missing "word".`);
+            }
             return {
-                text: asString(option.text),
-                is_correct: Boolean(option.is_correct ?? option.correct),
-                explanation: asString(option.explanation),
+                word: asString(word.word),
+                pronounce: asString(word.pronounce),
+                meaning: asString(word.meaning),
             };
         }),
     };
@@ -127,12 +133,14 @@ export default function ReadingEdit({
                   instruction: item.instruction,
                   article_url: item.article_url ?? '',
                   passage: item.passage,
-                  question: item.question,
-                  options: item.options.map((o) => ({
-                      text: o.text,
-                      is_correct: o.is_correct,
-                      explanation: o.explanation ?? '',
-                  })),
+                  words:
+                      item.words.length > 0
+                          ? item.words.map((w) => ({
+                                word: w.word,
+                                pronounce: w.pronounce ?? '',
+                                meaning: w.meaning ?? '',
+                            }))
+                          : [emptyWord()],
               }
             : emptyForm(),
     );
@@ -140,30 +148,30 @@ export default function ReadingEdit({
     const [jsonError, setJsonError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
-    const updateOption = (
+    const updateWord = (
         index: number,
-        field: keyof OptionForm,
-        value: string | boolean,
+        field: keyof WordForm,
+        value: string,
     ) => {
         setForm((prev) => ({
             ...prev,
-            options: prev.options.map((option, i) =>
-                i === index ? { ...option, [field]: value } : option,
+            words: prev.words.map((word, i) =>
+                i === index ? { ...word, [field]: value } : word,
             ),
         }));
     };
 
-    const removeOption = (index: number) => {
+    const removeWord = (index: number) => {
         setForm((prev) => ({
             ...prev,
-            options: prev.options.filter((_, i) => i !== index),
+            words: prev.words.filter((_, i) => i !== index),
         }));
     };
 
-    const addOption = () => {
+    const addWord = () => {
         setForm((prev) => ({
             ...prev,
-            options: [...prev.options, emptyOption()],
+            words: [...prev.words, emptyWord()],
         }));
     };
 
@@ -186,13 +194,12 @@ export default function ReadingEdit({
             instruction: form.instruction,
             article_url: form.article_url || null,
             passage: form.passage,
-            question: form.question,
-            options: form.options
-                .filter((option) => option.text.trim() !== '')
-                .map((option) => ({
-                    text: option.text,
-                    is_correct: option.is_correct,
-                    explanation: option.explanation || null,
+            words: form.words
+                .filter((word) => word.word.trim() !== '')
+                .map((word) => ({
+                    word: word.word,
+                    pronounce: word.pronounce || null,
+                    meaning: word.meaning || null,
                 })),
         };
 
@@ -206,266 +213,255 @@ export default function ReadingEdit({
         <>
             <Head title={`${level.code} — Day ${day.day_number} Lesen`} />
 
-            <div className="max-w-6xl space-y-6 p-4">
+            <div className="max-w-3xl space-y-6 p-4">
                 <Heading
                     title={`Day ${day.day_number} — Lesen`}
                     description={level.code}
                 />
 
-                <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-                    <div className="space-y-6">
-                        <Tabs defaultValue="manual">
-                            <TabsList>
-                                <TabsTrigger value="manual">Manual</TabsTrigger>
-                                <TabsTrigger value="json">
-                                    JSON import
-                                </TabsTrigger>
-                            </TabsList>
+                <div className="space-y-6">
+                    <Tabs defaultValue="manual">
+                        <TabsList>
+                            <TabsTrigger value="manual">Manual</TabsTrigger>
+                            <TabsTrigger value="json">JSON import</TabsTrigger>
+                        </TabsList>
 
-                            <TabsContent value="manual" className="space-y-4">
-                                <div className="grid gap-3 rounded-lg border p-4">
-                                    <div className="grid gap-2">
-                                        <Label>Instruction</Label>
+                        <TabsContent value="manual" className="space-y-4">
+                            <div className="grid gap-3 rounded-lg border p-4">
+                                <div className="grid gap-2">
+                                    <Label>Instruction</Label>
+                                    <Input
+                                        value={form.instruction}
+                                        onChange={(e) =>
+                                            setForm((prev) => ({
+                                                ...prev,
+                                                instruction: e.target.value,
+                                            }))
+                                        }
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label>Article link (optional)</Label>
+                                    <div className="flex gap-2">
                                         <Input
-                                            value={form.instruction}
+                                            value={form.article_url}
                                             onChange={(e) =>
                                                 setForm((prev) => ({
                                                     ...prev,
-                                                    instruction: e.target.value,
+                                                    article_url: e.target.value,
                                                 }))
                                             }
+                                            placeholder="https://example.com/article"
+                                            className="flex-1"
                                         />
-                                    </div>
-
-                                    <div className="grid gap-2">
-                                        <Label>Article link (optional)</Label>
-                                        <div className="flex gap-2">
-                                            <Input
-                                                value={form.article_url}
-                                                onChange={(e) =>
-                                                    setForm((prev) => ({
-                                                        ...prev,
-                                                        article_url:
-                                                            e.target.value,
-                                                    }))
-                                                }
-                                                placeholder="https://example.com/article"
-                                                className="flex-1"
-                                            />
-                                            <Dialog>
-                                                <DialogTrigger asChild>
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    disabled={
+                                                        !form.article_url.trim()
+                                                    }
+                                                    title="Preview article"
+                                                >
+                                                    <Globe className="size-4" />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="flex h-[85vh] max-w-4xl flex-col sm:max-w-4xl">
+                                                <DialogHeader>
+                                                    <DialogTitle>
+                                                        Article preview
+                                                    </DialogTitle>
+                                                    <DialogDescription className="truncate">
+                                                        {form.article_url}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="min-h-0 flex-1 overflow-hidden rounded-lg border">
+                                                    {form.article_url.trim() && (
+                                                        <iframe
+                                                            key={
+                                                                form.article_url
+                                                            }
+                                                            src={
+                                                                form.article_url
+                                                            }
+                                                            title="Article preview"
+                                                            className="size-full"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <DialogFooter className="items-center sm:justify-between">
+                                                    <p className="text-muted-foreground text-xs">
+                                                        Some sites block being
+                                                        shown in an iframe — use
+                                                        &quot;Open in new
+                                                        tab&quot; if the preview
+                                                        stays blank.
+                                                    </p>
                                                     <Button
+                                                        asChild
                                                         variant="outline"
-                                                        size="icon"
-                                                        disabled={
-                                                            !form.article_url.trim()
-                                                        }
-                                                        title="Preview article"
                                                     >
-                                                        <Globe className="size-4" />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent className="flex h-[85vh] max-w-4xl flex-col sm:max-w-4xl">
-                                                    <DialogHeader>
-                                                        <DialogTitle>
-                                                            Article preview
-                                                        </DialogTitle>
-                                                        <DialogDescription className="truncate">
-                                                            {form.article_url}
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-                                                    <div className="min-h-0 flex-1 overflow-hidden rounded-lg border">
-                                                        {form.article_url.trim() && (
-                                                            <iframe
-                                                                key={
-                                                                    form.article_url
-                                                                }
-                                                                src={
-                                                                    form.article_url
-                                                                }
-                                                                title="Article preview"
-                                                                className="size-full"
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    <DialogFooter className="items-center sm:justify-between">
-                                                        <p className="text-muted-foreground text-xs">
-                                                            Some sites block
-                                                            being shown in an
-                                                            iframe — use
-                                                            &quot;Open in new
-                                                            tab&quot; if the
-                                                            preview stays blank.
-                                                        </p>
-                                                        <Button
-                                                            asChild
-                                                            variant="outline"
+                                                        <a
+                                                            href={
+                                                                form.article_url
+                                                            }
+                                                            target="_blank"
+                                                            rel="noreferrer"
                                                         >
-                                                            <a
-                                                                href={
-                                                                    form.article_url
-                                                                }
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                            >
-                                                                Open in new tab
-                                                            </a>
-                                                        </Button>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid gap-2">
-                                        <Label>Passage</Label>
-                                        <Textarea
-                                            value={form.passage}
-                                            onChange={(e) =>
-                                                setForm((prev) => ({
-                                                    ...prev,
-                                                    passage: e.target.value,
-                                                }))
-                                            }
-                                            rows={6}
-                                        />
-                                    </div>
-
-                                    <div className="grid gap-2">
-                                        <Label>Question</Label>
-                                        <Input
-                                            value={form.question}
-                                            onChange={(e) =>
-                                                setForm((prev) => ({
-                                                    ...prev,
-                                                    question: e.target.value,
-                                                }))
-                                            }
-                                            placeholder="Warum geht Frau Keller zum Bürgeramt?"
-                                        />
+                                                            Open in new tab
+                                                        </a>
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 </div>
 
-                                {form.options.map((option, index) => (
+                                <div className="grid gap-2">
+                                    <Label>Passage</Label>
+                                    <Textarea
+                                        value={form.passage}
+                                        onChange={(e) =>
+                                            setForm((prev) => ({
+                                                ...prev,
+                                                passage: e.target.value,
+                                            }))
+                                        }
+                                        rows={6}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 rounded-lg border p-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-sm font-semibold">
+                                        Related words
+                                    </h3>
+                                </div>
+
+                                {form.words.map((word, index) => (
                                     <div
                                         key={index}
-                                        className="grid grid-cols-2 gap-3 rounded-lg border p-4"
+                                        className="grid grid-cols-3 gap-2 rounded-md border p-2"
                                     >
-                                        <div className="col-span-2 flex items-center justify-between">
-                                            <span className="text-muted-foreground text-xs">
-                                                Option {index + 1}
-                                            </span>
+                                        <Input
+                                            value={word.word}
+                                            onChange={(e) =>
+                                                updateWord(
+                                                    index,
+                                                    'word',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="Word"
+                                        />
+                                        <Input
+                                            value={word.pronounce}
+                                            onChange={(e) =>
+                                                updateWord(
+                                                    index,
+                                                    'pronounce',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="Pronounce"
+                                        />
+                                        <div className="flex gap-2">
+                                            <Input
+                                                value={word.meaning}
+                                                onChange={(e) =>
+                                                    updateWord(
+                                                        index,
+                                                        'meaning',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                placeholder="Meaning"
+                                            />
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="size-7"
+                                                className="size-9 shrink-0"
                                                 onClick={() =>
-                                                    removeOption(index)
+                                                    removeWord(index)
                                                 }
                                             >
                                                 <Trash2 className="size-4" />
                                             </Button>
                                         </div>
-
-                                        <div className="col-span-2 grid gap-2">
-                                            <Label>Text</Label>
-                                            <Input
-                                                value={option.text}
-                                                onChange={(e) =>
-                                                    updateOption(
-                                                        index,
-                                                        'text',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox
-                                                checked={option.is_correct}
-                                                onCheckedChange={(checked) =>
-                                                    updateOption(
-                                                        index,
-                                                        'is_correct',
-                                                        checked === true,
-                                                    )
-                                                }
-                                            />
-                                            <Label>Correct answer</Label>
-                                        </div>
-
-                                        <div className="col-span-2 grid gap-2">
-                                            <Label>Explanation</Label>
-                                            <Textarea
-                                                value={option.explanation}
-                                                onChange={(e) =>
-                                                    updateOption(
-                                                        index,
-                                                        'explanation',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
                                     </div>
                                 ))}
 
-                                <Button variant="outline" onClick={addOption}>
-                                    <Plus className="size-4" />
-                                    Add option
-                                </Button>
-                            </TabsContent>
-
-                            <TabsContent value="json" className="space-y-3">
-                                <Label htmlFor="json-input">
-                                    Paste a reading item (JSON)
-                                </Label>
-                                <Textarea
-                                    id="json-input"
-                                    value={jsonText}
-                                    onChange={(e) =>
-                                        setJsonText(e.target.value)
-                                    }
-                                    rows={12}
-                                    className="font-mono text-xs"
-                                    placeholder={`{\n  "instruction": "Lesen Sie den Text und beantworten Sie die Frage.",\n  "article_url": "https://example.com/article",\n  "passage": "Frau Keller wohnt seit drei Monaten in Berlin. ...",\n  "question": "Warum geht Frau Keller zum Bürgeramt?",\n  "options": [\n    { "text": "Um ihren Wohnsitz anzumelden", "is_correct": true, "explanation": "..." }\n  ]\n}`}
-                                />
-                                {jsonError && (
-                                    <p className="text-destructive text-sm">
-                                        {jsonError}
-                                    </p>
-                                )}
                                 <Button
                                     variant="outline"
-                                    onClick={onParseJson}
-                                    disabled={!jsonText.trim()}
+                                    size="sm"
+                                    onClick={addWord}
                                 >
-                                    Parse into form above
+                                    <Plus className="size-4" />
+                                    Add word
                                 </Button>
-                                <p className="text-muted-foreground text-xs">
-                                    Parsing replaces the fields in the Manual
-                                    tab — review them there, then save.
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="json" className="space-y-3">
+                            <Label htmlFor="json-input">
+                                Paste a reading item (JSON)
+                            </Label>
+                            <Textarea
+                                id="json-input"
+                                value={jsonText}
+                                onChange={(e) => setJsonText(e.target.value)}
+                                rows={12}
+                                className="font-mono text-xs"
+                                placeholder={`{\n  "instruction": "Lesen Sie den Text und lernen Sie die markierten Wörter.",\n  "article_url": "https://example.com/article",\n  "passage": "Frau Keller wohnt seit drei Monaten in Berlin. ...",\n  "words": [\n    { "word": "der Wohnsitz", "pronounce": "dehr VOHN-zits", "meaning": "residence" }\n  ]\n}`}
+                            />
+                            {jsonError && (
+                                <p className="text-destructive text-sm">
+                                    {jsonError}
                                 </p>
-                            </TabsContent>
-                        </Tabs>
-
-                        <Button onClick={onSave} disabled={isSaving}>
-                            {isSaving ? 'Saving…' : 'Save Lesen'}
-                        </Button>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div>
-                            <h2 className="text-lg font-semibold">
-                                Vocabulary
-                            </h2>
-                            <p className="text-muted-foreground text-sm">
-                                This day's vocab cards — shared with the Vocab
-                                module.
+                            )}
+                            <Button
+                                variant="outline"
+                                onClick={onParseJson}
+                                disabled={!jsonText.trim()}
+                            >
+                                Parse into form above
+                            </Button>
+                            <p className="text-muted-foreground text-xs">
+                                Parsing replaces the fields in the Manual tab —
+                                review them there, then save.
                             </p>
-                        </div>
+                        </TabsContent>
+                    </Tabs>
 
+                    <Button onClick={onSave} disabled={isSaving}>
+                        {isSaving ? 'Saving…' : 'Save Lesen'}
+                    </Button>
+                </div>
+            </div>
+
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button
+                        size="icon"
+                        className="fixed top-1/2 right-4 z-40 size-11 -translate-y-1/2 rounded-full shadow-lg"
+                        title="Vocabulary"
+                    >
+                        <BookOpen className="size-5" />
+                    </Button>
+                </SheetTrigger>
+                <SheetContent className="w-full gap-0 overflow-y-auto sm:max-w-sm">
+                    <SheetHeader>
+                        <SheetTitle>Vocabulary</SheetTitle>
+                        <SheetDescription>
+                            This day's vocab cards — shared with the Vocab
+                            module.
+                        </SheetDescription>
+                    </SheetHeader>
+
+                    <div className="px-4 pb-4 text-sm">
                         <VocabCardsEditor
                             level={level}
                             day={day}
@@ -473,8 +469,8 @@ export default function ReadingEdit({
                             saveLabel="Save vocab"
                         />
                     </div>
-                </div>
-            </div>
+                </SheetContent>
+            </Sheet>
         </>
     );
 }

@@ -72,29 +72,36 @@ class ContentSeeder extends Seeder
                 ],
             ]);
 
-            $listening = $day->listeningItem()->create([
-                'type' => 'video',
-                'title' => 'Beim Bürgeramt',
-                'duration_label' => '02:14',
-                'question' => 'Was muss die Person beim Bürgeramt mitbringen?',
+            $day->listeningItems()->createMany([
+                [
+                    'type' => 'video',
+                    'title' => 'Beim Bürgeramt – Anmeldung',
+                    'duration_label' => '02:14',
+                    'words' => [
+                        ['word' => 'der Ausweis', 'pronounce' => 'dehr OWS-vice', 'meaning' => 'ID card'],
+                        ['word' => 'anmelden', 'pronounce' => 'AN-mel-den', 'meaning' => 'to register'],
+                    ],
+                    'sort_order' => 1,
+                ],
+                [
+                    'type' => 'video',
+                    'title' => 'Beim Bürgeramt – Der Termin',
+                    'duration_label' => '01:45',
+                    'words' => [
+                        ['word' => 'der Termin', 'pronounce' => 'dehr tehr-MEEN', 'meaning' => 'appointment'],
+                        ['word' => 'die Miete', 'pronounce' => 'dee MEE-teh', 'meaning' => 'rent'],
+                    ],
+                    'sort_order' => 2,
+                ],
             ]);
 
-            $listening->options()->createMany([
-                ['text' => 'Nur den Ausweis', 'is_correct' => false, 'explanation' => 'Im Video wird auch die Meldebescheinigung erwähnt.', 'sort_order' => 1],
-                ['text' => 'Ausweis und Meldebescheinigung', 'is_correct' => true, 'explanation' => 'Richtig — beide Dokumente werden im Video verlangt.', 'sort_order' => 2],
-                ['text' => 'Gar keine Dokumente', 'is_correct' => false, 'explanation' => 'Das Bürgeramt verlangt immer Dokumente.', 'sort_order' => 3],
-            ]);
-
-            $reading = $day->readingItem()->create([
-                'instruction' => 'Lesen Sie den Text und beantworten Sie die Frage.',
+            $day->readingItem()->create([
+                'instruction' => 'Lesen Sie den Text und lernen Sie die markierten Wörter.',
                 'passage' => 'Frau Keller wohnt seit drei Monaten in Berlin. Sie hat einen Termin beim Bürgeramt, weil sie ihren Wohnsitz anmelden muss. Sie bringt ihren Ausweis und die Meldebescheinigung mit. Der Termin dauert nur fünfzehn Minuten, und danach bekommt sie eine Bestätigung.',
-                'question' => 'Warum geht Frau Keller zum Bürgeramt?',
-            ]);
-
-            $reading->options()->createMany([
-                ['text' => 'Um ihren Wohnsitz anzumelden', 'is_correct' => true, 'explanation' => 'Richtig — das ist der Grund für ihren Termin.', 'sort_order' => 1],
-                ['text' => 'Um einen neuen Ausweis zu beantragen', 'is_correct' => false, 'explanation' => 'Der Text erwähnt keinen neuen Ausweis.', 'sort_order' => 2],
-                ['text' => 'Um die Miete zu bezahlen', 'is_correct' => false, 'explanation' => 'Die Miete wird im Text nicht erwähnt.', 'sort_order' => 3],
+                'words' => [
+                    ['word' => 'der Wohnsitz', 'pronounce' => 'dehr VOHN-zits', 'meaning' => 'residence'],
+                    ['word' => 'die Meldebescheinigung', 'pronounce' => 'dee MEL-deh-beh-shy-ni-gung', 'meaning' => 'registration certificate'],
+                ],
             ]);
 
             $speaking = $day->speakingItem()->create([

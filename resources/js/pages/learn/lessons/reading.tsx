@@ -1,5 +1,4 @@
 import { Head, router } from '@inertiajs/react';
-import { McQuestion } from '@/components/learn/mc-question';
 import { Button } from '@/components/ui/button';
 import learn from '@/routes/learn';
 import type { LearnDay, ReadingItem } from '@/types/learn';
@@ -20,6 +19,8 @@ export default function LessonsReading({
             skill: 'lesen',
         });
     };
+
+    const hasWords = readingItem.words.length > 0;
 
     return (
         <>
@@ -48,10 +49,33 @@ export default function LessonsReading({
                     </a>
                 )}
 
-                <McQuestion
-                    question={readingItem.question}
-                    options={readingItem.options}
-                />
+                {hasWords && (
+                    <div className="space-y-2">
+                        <div className="text-sm font-semibold">
+                            Wortschatz
+                        </div>
+                        {readingItem.words.map((word, index) => (
+                            <div
+                                key={index}
+                                className="bg-card space-y-1 rounded-lg border p-3"
+                            >
+                                <div className="text-sm font-semibold">
+                                    {word.word}
+                                    {word.pronounce && (
+                                        <span className="text-muted-foreground ml-1 text-xs font-normal">
+                                            ({word.pronounce})
+                                        </span>
+                                    )}
+                                </div>
+                                {word.meaning && (
+                                    <div className="text-primary text-xs">
+                                        {word.meaning}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <Button size="lg" className="w-full" onClick={onComplete}>
                     Abschnitt abschließen

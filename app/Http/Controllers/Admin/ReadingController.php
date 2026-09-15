@@ -7,7 +7,6 @@ use App\Models\Day;
 use App\Models\Level;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,12 +22,10 @@ class ReadingController extends Controller
 
     public function edit(Level $level, Day $day): Response
     {
-        $item = $day->readingItem()->with('options')->first();
-
         return Inertia::render('admin/reading/edit', [
             'level' => $level,
             'day' => $day,
-            'item' => $item,
+            'item' => $day->readingItem,
             'cards' => $day->vocabCards,
         ]);
     }
@@ -39,32 +36,22 @@ class ReadingController extends Controller
             'instruction' => ['required', 'string'],
             'article_url' => ['nullable', 'url', 'max:2048'],
             'passage' => ['required', 'string'],
-            'question' => ['required', 'string', 'max:255'],
-            'options' => ['present', 'array'],
-            'options.*.text' => ['required', 'string', 'max:255'],
-            'options.*.is_correct' => ['boolean'],
-            'options.*.explanation' => ['nullable', 'string'],
+            'words' => ['present', 'array'],
+            'words.*.word' => ['required', 'string', 'max:255'],
+            'words.*.pronounce' => ['nullable', 'string', 'max:255'],
+            'words.*.meaning' => ['nullable', 'string', 'max:255'],
         ]);
 
-        DB::transaction(function () use ($day, $validated) {
-            $item = $day->readingItem()->updateOrCreate([], [
-                'instruction' => $validated['instruction'],
-                'article_url' => $validated['article_url'] ?? null,
-                'passage' => $validated['passage'],
-                'question' => $validated['question'],
-            ]);
-
-            $item->options()->delete();
-
-            foreach ($validated['options'] as $index => $option) {
-                $item->options()->create([
-                    'text' => $option['text'],
-                    'is_correct' => $option['is_correct'] ?? false,
-                    'explanation' => $option['explanation'] ?? null,
-                    'sort_order' => $index + 1,
-                ]);
-            }
-        });
+        $day->readingItem()->updateOrCreate([], [
+            'instruction' => $validated['instruction'],
+            'article_url' => $validated['article_url'] ?? null,
+            'passage' => $validated['passage'],
+            'words' => array_map(fn (array $word) => [
+                'word' => $word['word'],
+                'pronounce' => $word['pronounce'] ?? null,
+                'meaning' => $word['meaning'] ?? null,
+            ], $validated['words']),
+        ]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Reading content saved.')]);
 

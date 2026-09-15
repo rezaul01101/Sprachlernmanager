@@ -14,7 +14,7 @@ class DayProgressService
         return $level->days()
             ->where('day_number', $dayNumber)
             ->where('is_published', true)
-            ->with(['level', 'vocabCards', 'listeningItem.options', 'readingItem.options', 'speakingItem.aiLines'])
+            ->with(['level', 'vocabCards', 'listeningItems', 'readingItem', 'speakingItem.aiLines'])
             ->firstOrFail();
     }
 
@@ -45,7 +45,7 @@ class DayProgressService
     {
         return [
             'wortschatz' => $day->vocabCards->isNotEmpty(),
-            'hoeren' => $day->listeningItem !== null,
+            'hoeren' => $day->listeningItems->isNotEmpty(),
             'lesen' => $day->readingItem !== null,
             'sprechen' => $day->speakingItem !== null,
         ];

@@ -10,6 +10,7 @@ import vocab from '@/routes/admin/levels/vocab';
 
 export type VocabCardForm = {
     word: string;
+    pronounce: string;
     tag: string;
     translation_en: string;
     translation_bn: string;
@@ -18,6 +19,7 @@ export type VocabCardForm = {
 
 const emptyCard = (): VocabCardForm => ({
     word: '',
+    pronounce: '',
     tag: '',
     translation_en: '',
     translation_bn: '',
@@ -64,6 +66,7 @@ function parseCardsInput(text: string): VocabCardForm[] {
 
         return {
             word,
+            pronounce: asString(item.pronounce),
             tag: asString(item.tag),
             translation_en: translationEn,
             translation_bn: asString(item.translation_bn),
@@ -131,6 +134,7 @@ export default function VocabCardsEditor({
                 .filter((card) => card.word.trim() !== '')
                 .map((card) => ({
                     word: card.word,
+                    pronounce: card.pronounce || null,
                     tag: card.tag || null,
                     translation_en: card.translation_en,
                     translation_bn: card.translation_bn || null,
@@ -184,6 +188,21 @@ export default function VocabCardsEditor({
                                         )
                                     }
                                     placeholder="der Ausweis"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label>Pronounce</Label>
+                                <Input
+                                    value={card.pronounce}
+                                    onChange={(e) =>
+                                        updateCard(
+                                            index,
+                                            'pronounce',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="er/sie/es"
                                 />
                             </div>
 
@@ -262,7 +281,7 @@ export default function VocabCardsEditor({
                         onChange={(e) => setJsonText(e.target.value)}
                         rows={12}
                         className="font-mono text-xs"
-                        placeholder={`[\n  {\n    "word": "der Ausweis",\n    "tag": "Substantiv · m.",\n    "translation_en": "ID card",\n    "translation_bn": "আইডি কার্ড",\n    "example": "„Bitte zeigen Sie Ihren Ausweis am Schalter.“"\n  }\n]`}
+                        placeholder={`[\n  {\n    "word": "der Ausweis",\n    "pronounce": "er",\n    "tag": "Substantiv · m.",\n    "translation_en": "ID card",\n    "translation_bn": "আইডি কার্ড",\n    "example": "„Bitte zeigen Sie Ihren Ausweis am Schalter.“"\n  }\n]`}
                     />
                     {jsonError && (
                         <p className="text-destructive text-sm">{jsonError}</p>

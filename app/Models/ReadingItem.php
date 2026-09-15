@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -14,26 +14,33 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $instruction
  * @property string|null $article_url
  * @property string $passage
- * @property string $question
+ * @property array<int, array{word: string, pronounce: string|null, meaning: string|null}> $words
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  */
-#[Fillable(['day_id', 'instruction', 'article_url', 'passage', 'question'])]
+#[Fillable(['day_id', 'instruction', 'article_url', 'passage', 'words'])]
 class ReadingItem extends Model
 {
+    /**
+     * Rows created before this column existed (or any insert that omits
+     * it) store NULL — always hand back [] rather than null so callers
+     * never need a null-guard before mapping/counting related words.
+     *
+     * @return Attribute<array<int, array{word: string, pronounce: string|null, meaning: string|null}>, array<int, array{word: string, pronounce: string|null, meaning: string|null}>|null>
+     */
+    protected function words(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value !== null ? json_decode($value, true) : [],
+            set: fn (?array $value) => json_encode($value ?? []),
+        );
+    }
+
     /**
      * @return BelongsTo<Day, $this>
      */
     public function day(): BelongsTo
     {
         return $this->belongsTo(Day::class);
-    }
-
-    /**
-     * @return HasMany<ReadingOption, $this>
-     */
-    public function options(): HasMany
-    {
-        return $this->hasMany(ReadingOption::class)->orderBy('sort_order');
     }
 }

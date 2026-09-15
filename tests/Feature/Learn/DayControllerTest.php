@@ -78,7 +78,7 @@ class DayControllerTest extends TestCase
         $level = Level::factory()->create(['code' => 'A1', 'is_published' => true]);
         $day = Day::factory()->create(['level_id' => $level->id, 'day_number' => 1, 'is_published' => true]);
         VocabCard::factory()->create(['day_id' => $day->id]);
-        ListeningItem::create(['day_id' => $day->id, 'type' => 'audio', 'title' => 'Hören', 'duration_label' => '2 min', 'question' => 'Was?']);
+        ListeningItem::create(['day_id' => $day->id, 'type' => 'audio', 'title' => 'Hören', 'duration_label' => '2 min']);
 
         $response = $this->actingAs($user)->post(route('learn.lessons.complete', ['A1', 1]), ['skill' => 'wortschatz']);
 

@@ -22,7 +22,7 @@ class ListeningControllerTest extends TestCase
         $this->get(route('learn.lessons.listening', ['A1', 1]))->assertRedirect(route('login'));
     }
 
-    public function test_shows_the_listening_item_for_a_reachable_day()
+    public function test_shows_the_listening_items_for_a_reachable_day()
     {
         $user = User::factory()->create();
         $level = Level::factory()->create(['code' => 'A1', 'is_published' => true]);
@@ -33,7 +33,17 @@ class ListeningControllerTest extends TestCase
             'video_url' => 'https://www.youtube.com/watch?v=abc123',
             'title' => 'Begrüßungen hören',
             'duration_label' => '3 min',
-            'question' => 'Was hat sie gesagt?',
+            'words' => [
+                ['word' => 'die Begrüßung', 'pronounce' => 'dee beh-GROO-sung', 'meaning' => 'greeting'],
+            ],
+            'sort_order' => 1,
+        ]);
+        ListeningItem::create([
+            'day_id' => $day->id,
+            'type' => 'audio',
+            'title' => 'Verabschiedungen hören',
+            'duration_label' => '2 min',
+            'sort_order' => 2,
         ]);
 
         $response = $this->actingAs($user)->get(route('learn.lessons.listening', ['A1', 1]));
@@ -41,8 +51,11 @@ class ListeningControllerTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn (Assert $page) => $page
             ->component('learn/lessons/listening')
-            ->where('listeningItem.title', 'Begrüßungen hören')
-            ->where('listeningItem.video_url', 'https://www.youtube.com/watch?v=abc123'),
+            ->has('listeningItems', 2)
+            ->where('listeningItems.0.title', 'Begrüßungen hören')
+            ->where('listeningItems.0.video_url', 'https://www.youtube.com/watch?v=abc123')
+            ->where('listeningItems.0.words.0.word', 'die Begrüßung')
+            ->where('listeningItems.1.title', 'Verabschiedungen hören'),
         );
     }
 

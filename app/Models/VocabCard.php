@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $day_id
  * @property string $word
+ * @property string|null $pronounce
  * @property string|null $tag
  * @property string $translation_en
  * @property string|null $translation_bn
@@ -21,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['day_id', 'word', 'tag', 'translation_en', 'translation_bn', 'example', 'sort_order'])]
+#[Fillable(['day_id', 'word', 'pronounce', 'tag', 'translation_en', 'translation_bn', 'example', 'sort_order'])]
 class VocabCard extends Model
 {
     /** @use HasFactory<VocabCardFactory> */
