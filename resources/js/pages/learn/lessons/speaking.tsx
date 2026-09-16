@@ -1,9 +1,6 @@
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
-import { SpeakingGespraechPane } from '@/components/learn/speaking-gespraech-pane';
-import { SpeakingNachsprechenPane } from '@/components/learn/speaking-nachsprechen-pane';
+import { SpeakingDialoguePane } from '@/components/learn/speaking-dialogue-pane';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import learn from '@/routes/learn';
 import type { LearnDay, SpeakingItem } from '@/types/learn';
 
@@ -18,46 +15,44 @@ export default function LessonsSpeaking({
     day: LearnDay;
     speakingItem: SpeakingItem;
 }) {
-    const [pane, setPane] = useState<'nachsprechen' | 'gespraech'>(
-        'nachsprechen',
-    );
-
     const onComplete = () => {
         router.post(learn.lessons.complete.url([level.code, day.day_number]), {
             skill: 'sprechen',
         });
     };
 
+    const hasWords = speakingItem.words.length > 0;
+
     return (
         <>
             <Head title={`Sprechen — Tag ${day.day_number}`} />
 
             <div className="mx-auto flex max-w-2xl flex-col gap-5 p-4">
-                <Tabs
-                    value={pane}
-                    onValueChange={(v) => setPane(v as typeof pane)}
-                >
-                    <TabsList className="w-full">
-                        <TabsTrigger value="nachsprechen" className="flex-1">
-                            Nachsprechen
-                        </TabsTrigger>
-                        <TabsTrigger value="gespraech" className="flex-1">
-                            Gespräch
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="nachsprechen">
-                        <SpeakingNachsprechenPane
-                            targetSentence={speakingItem.target_sentence}
-                        />
-                    </TabsContent>
-                    <TabsContent value="gespraech">
-                        <SpeakingGespraechPane
-                            aiLines={speakingItem.ai_lines.map(
-                                (line) => line.text,
-                            )}
-                        />
-                    </TabsContent>
-                </Tabs>
+                <SpeakingDialoguePane dialogue={speakingItem.dialogue} />
+
+                {hasWords && (
+                    <div className="space-y-2">
+                        <div className="text-sm font-semibold">Wortschatz</div>
+                        {speakingItem.words.map((word, index) => (
+                            <div
+                                key={index}
+                                className="bg-card space-y-1 rounded-lg border p-3"
+                            >
+                                <div className="text-sm font-semibold">
+                                    {word.german}
+                                    {word.pronounce && (
+                                        <span className="text-muted-foreground ml-1 text-xs font-normal">
+                                            ({word.pronounce})
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="text-primary text-xs">
+                                    {word.english}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <Button size="lg" className="w-full" onClick={onComplete}>
                     Abschnitt abschließen

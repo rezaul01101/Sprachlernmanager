@@ -4,7 +4,6 @@ namespace Tests\Feature\Learn;
 
 use App\Models\Day;
 use App\Models\Level;
-use App\Models\SpeakingAiLine;
 use App\Models\SpeakingItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,23 +22,30 @@ class SpeakingControllerTest extends TestCase
         $this->get(route('learn.lessons.speaking', ['A1', 1]))->assertRedirect(route('login'));
     }
 
-    public function test_shows_the_speaking_item_with_ai_lines_in_order_for_a_reachable_day()
+    public function test_shows_the_speaking_item_with_dialogue_and_words_for_a_reachable_day()
     {
         $user = User::factory()->create();
         $level = Level::factory()->create(['code' => 'A1', 'is_published' => true]);
         $day = Day::factory()->create(['level_id' => $level->id, 'day_number' => 1, 'is_published' => true]);
-        $speaking = SpeakingItem::create(['day_id' => $day->id, 'target_sentence' => 'Guten Tag!']);
-        SpeakingAiLine::create(['speaking_item_id' => $speaking->id, 'text' => 'Zweite Zeile', 'sort_order' => 2]);
-        SpeakingAiLine::create(['speaking_item_id' => $speaking->id, 'text' => 'Erste Zeile', 'sort_order' => 1]);
+        SpeakingItem::create([
+            'day_id' => $day->id,
+            'dialogue' => [
+                ['german' => 'Guten Tag!', 'english' => 'Good day!', 'pronounce' => 'গুটেন টাক!'],
+                ['german' => 'Hallo!', 'english' => 'Hello!', 'pronounce' => 'হ্যালো!'],
+            ],
+            'words' => [
+                ['german' => 'der Termin', 'english' => 'appointment', 'pronounce' => 'ডেয়া টারমিন'],
+            ],
+        ]);
 
         $response = $this->actingAs($user)->get(route('learn.lessons.speaking', ['A1', 1]));
 
         $response->assertOk();
         $response->assertInertia(fn (Assert $page) => $page
             ->component('learn/lessons/speaking')
-            ->where('speakingItem.target_sentence', 'Guten Tag!')
-            ->where('speakingItem.ai_lines.0.text', 'Erste Zeile')
-            ->where('speakingItem.ai_lines.1.text', 'Zweite Zeile'),
+            ->where('speakingItem.dialogue.0.german', 'Guten Tag!')
+            ->where('speakingItem.dialogue.1.german', 'Hallo!')
+            ->where('speakingItem.words.0.german', 'der Termin'),
         );
     }
 

@@ -14,7 +14,7 @@ class DayProgressService
         return $level->days()
             ->where('day_number', $dayNumber)
             ->where('is_published', true)
-            ->with(['level', 'vocabCards', 'listeningItems', 'readingItem', 'speakingItem.aiLines'])
+            ->with(['level', 'vocabCards', 'listeningItems', 'readingItem', 'speakingItem'])
             ->firstOrFail();
     }
 

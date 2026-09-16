@@ -49,16 +49,22 @@ export type ReadingItem = {
     words: ListeningWord[];
 };
 
-export type SpeakingAiLine = {
-    id: number;
-    text: string;
-    sort_order: number;
+export type SpeakingDialogueLine = {
+    german: string;
+    english: string;
+    pronounce: string | null;
+};
+
+export type SpeakingWord = {
+    german: string;
+    english: string;
+    pronounce: string | null;
 };
 
 export type SpeakingItem = {
     id: number;
-    target_sentence: string;
-    ai_lines: SpeakingAiLine[];
+    dialogue: SpeakingDialogueLine[];
+    words: SpeakingWord[];
 };
 
 export type DayProgress = {
@@ -72,10 +78,4 @@ export type CompletionSummary = {
     requiredSkills: (keyof DayProgress)[];
     doneCount: number;
     isDayComplete: boolean;
-};
-
-export type ChatMessage = {
-    id: string;
-    sender: 'ai' | 'user';
-    text: string;
 };

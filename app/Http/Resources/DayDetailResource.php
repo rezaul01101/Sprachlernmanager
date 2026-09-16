@@ -49,8 +49,8 @@ class DayDetailResource extends JsonResource
                 'words' => $this->readingItem->words ?? [],
             ] : null,
             'speaking' => $this->speakingItem ? [
-                'targetSentence' => $this->speakingItem->target_sentence,
-                'aiLines' => $this->speakingItem->aiLines->pluck('text'),
+                'dialogue' => $this->speakingItem->dialogue ?? [],
+                'words' => $this->speakingItem->words ?? [],
             ] : null,
         ];
     }
