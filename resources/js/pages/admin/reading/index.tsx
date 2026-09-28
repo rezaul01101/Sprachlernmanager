@@ -27,11 +27,11 @@ export default function ReadingIndex({
 }) {
     return (
         <>
-            <Head title={`${level.code} — Lesen`} />
+            <Head title={`${level.code} — Reading`} />
 
             <div className="space-y-6 p-4">
                 <Heading
-                    title={`${level.code} — Lesen`}
+                    title={`${level.code} — Reading`}
                     description="Choose a day to manage its reading exercise."
                 />
 
@@ -63,6 +63,6 @@ ReadingIndex.layout = (props: { level: Level }) => ({
         { title: 'Dashboard', href: dashboard() },
         { title: 'Levels', href: levels.index() },
         { title: props.level.code, href: days.index(props.level.id) },
-        { title: 'Lesen', href: reading.index(props.level.id) },
+        { title: 'Reading', href: reading.index(props.level.id) },
     ] satisfies BreadcrumbItem[],
 });

@@ -40,8 +40,8 @@ export default function LessonsRoadmap({ level }: { level: LearnLevel }) {
                         <div className="text-xl font-bold">{level.title}</div>
                         <div className="text-muted-foreground text-sm">
                             {isLevelLocked
-                                ? 'Gesperrt'
-                                : `${level.done_days} von ${level.days_count} Tagen abgeschlossen`}
+                                ? 'Locked'
+                                : `${level.done_days} of ${level.days_count} days completed`}
                         </div>
                     </div>
                 </div>

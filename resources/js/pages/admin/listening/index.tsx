@@ -27,11 +27,11 @@ export default function ListeningIndex({
 }) {
     return (
         <>
-            <Head title={`${level.code} — Hören`} />
+            <Head title={`${level.code} — Listening`} />
 
             <div className="space-y-6 p-4">
                 <Heading
-                    title={`${level.code} — Hören`}
+                    title={`${level.code} — Listening`}
                     description="Choose a day to manage its listening exercise."
                 />
 
@@ -65,6 +65,6 @@ ListeningIndex.layout = (props: { level: Level }) => ({
         { title: 'Dashboard', href: dashboard() },
         { title: 'Levels', href: levels.index() },
         { title: props.level.code, href: days.index(props.level.id) },
-        { title: 'Hören', href: listening.index(props.level.id) },
+        { title: 'Listening', href: listening.index(props.level.id) },
     ] satisfies BreadcrumbItem[],
 });

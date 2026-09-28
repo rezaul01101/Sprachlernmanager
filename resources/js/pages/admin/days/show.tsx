@@ -45,7 +45,7 @@ export default function DayShow({ level, day }: { level: Level; day: Day }) {
         },
         {
             key: 'listen',
-            label: 'Hören',
+            label: 'Listening',
             icon: Headphones,
             href: listening.edit([level.id, day.id]),
             status:
@@ -56,7 +56,7 @@ export default function DayShow({ level, day }: { level: Level; day: Day }) {
         },
         {
             key: 'read',
-            label: 'Lesen',
+            label: 'Reading',
             icon: BookOpen,
             href: reading.edit([level.id, day.id]),
             status: day.reading_item_exists ? 'Added' : 'Not added',
@@ -64,7 +64,7 @@ export default function DayShow({ level, day }: { level: Level; day: Day }) {
         },
         {
             key: 'speak',
-            label: 'Sprechen',
+            label: 'Speaking',
             icon: Mic,
             href: speaking.edit([level.id, day.id]),
             status: day.speaking_item_exists ? 'Added' : 'Not added',

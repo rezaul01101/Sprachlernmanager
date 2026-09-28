@@ -63,7 +63,7 @@ function DialogueLineCard({
                     <button
                         type="button"
                         onClick={onPressAudio}
-                        aria-label="Anhören"
+                        aria-label="Listen"
                         className={cn(
                             'border-primary text-primary flex size-8 items-center justify-center rounded-full border-2 transition-opacity',
                             isPlaying && 'opacity-60',
@@ -74,7 +74,7 @@ function DialogueLineCard({
                     <button
                         type="button"
                         onClick={onPressRecord}
-                        aria-label="Aufnehmen"
+                        aria-label="Record"
                         className={cn(
                             'bg-destructive flex size-8 items-center justify-center rounded-full text-white',
                             isRecording && 'animate-pulse',

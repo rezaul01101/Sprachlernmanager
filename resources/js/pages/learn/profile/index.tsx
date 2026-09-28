@@ -13,7 +13,7 @@ export default function LearnProfile() {
 
     return (
         <>
-            <Head title="Profil" />
+            <Head title="Profile" />
 
             <div className="mx-auto max-w-md space-y-6 p-4">
                 <div className="flex flex-col items-center gap-1">
@@ -36,11 +36,8 @@ export default function LearnProfile() {
 
                 <div className="flex gap-3">
                     <StatChip label="Streak" value={STATS.streak} />
-                    <StatChip label="Wörter" value={STATS.words} />
-                    <StatChip
-                        label="Genauigkeit"
-                        value={`${STATS.accuracy}%`}
-                    />
+                    <StatChip label="Words" value={STATS.words} />
+                    <StatChip label="Accuracy" value={`${STATS.accuracy}%`} />
                 </div>
 
                 <div className="space-y-2">
@@ -49,7 +46,7 @@ export default function LearnProfile() {
                         className="bg-card flex items-center gap-3 rounded-xl border p-4 text-sm font-medium"
                     >
                         <Settings className="size-5" />
-                        Einstellungen
+                        Settings
                     </Link>
 
                     <Link
@@ -58,7 +55,7 @@ export default function LearnProfile() {
                         onClick={() => router.flushAll()}
                         className="text-destructive bg-card w-full rounded-xl border p-4 text-left text-sm font-medium"
                     >
-                        Abmelden
+                        Log out
                     </Link>
                 </div>
             </div>

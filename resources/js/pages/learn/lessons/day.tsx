@@ -23,7 +23,7 @@ export default function LessonsDay({
 
     return (
         <>
-            <Head title={`${level.code} — Tag ${day.day_number}`} />
+            <Head title={`${level.code} — Day ${day.day_number}`} />
 
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="bg-card inline-flex items-center gap-2 rounded-full border px-3 py-1.5">
@@ -31,26 +31,25 @@ export default function LessonsDay({
                         {level.code}
                     </span>
                     <span className="text-muted-foreground text-xs">
-                        Heutiger Fokus
+                        Today's focus
                     </span>
                 </div>
 
                 <p className="text-base">{day.focus_text}</p>
 
                 <p className="text-muted-foreground text-sm">
-                    {completionSummary.doneCount} von{' '}
-                    {completionSummary.requiredSkills.length} Abschnitten
-                    abgeschlossen
+                    {completionSummary.doneCount} of{' '}
+                    {completionSummary.requiredSkills.length} sections completed
                 </p>
 
                 <div className="space-y-3">
                     <PracticeCard
                         icon={BookMarked}
-                        title="Wortschatz"
+                        title="Vocabulary"
                         subtitle={
                             hasContent('wortschatz')
-                                ? 'Neue Wörter lernen'
-                                : 'Noch nicht verfügbar'
+                                ? 'Learn new words'
+                                : 'Not available yet'
                         }
                         done={progress.wortschatz}
                         href={
@@ -64,11 +63,11 @@ export default function LessonsDay({
                     />
                     <PracticeCard
                         icon={Headphones}
-                        title="Hören"
+                        title="Listening"
                         subtitle={
                             hasContent('hoeren')
-                                ? 'Audio oder Video'
-                                : 'Noch nicht verfügbar'
+                                ? 'Audio or video'
+                                : 'Not available yet'
                         }
                         done={progress.hoeren}
                         href={
@@ -82,11 +81,11 @@ export default function LessonsDay({
                     />
                     <PracticeCard
                         icon={BookOpen}
-                        title="Lesen"
+                        title="Reading"
                         subtitle={
                             hasContent('lesen')
-                                ? 'Kurztext verstehen'
-                                : 'Noch nicht verfügbar'
+                                ? 'Understand a short text'
+                                : 'Not available yet'
                         }
                         done={progress.lesen}
                         href={
@@ -100,11 +99,11 @@ export default function LessonsDay({
                     />
                     <PracticeCard
                         icon={Mic}
-                        title="Sprechen"
+                        title="Speaking"
                         subtitle={
                             hasContent('sprechen')
-                                ? 'Nachsprechen & Dialog'
-                                : 'Noch nicht verfügbar'
+                                ? 'Repeat & dialogue'
+                                : 'Not available yet'
                         }
                         done={progress.sprechen}
                         href={
@@ -121,7 +120,7 @@ export default function LessonsDay({
                 {completionSummary.isDayComplete && (
                     <Button asChild size="lg" className="w-full">
                         <Link href={learn.lessons.roadmap.url(level.code)}>
-                            Zurück zur Übersicht
+                            Back to overview
                         </Link>
                     </Button>
                 )}

@@ -45,12 +45,12 @@ export default function ListeningEdit({
 }) {
     return (
         <>
-            <Head title={`${level.code} — Day ${day.day_number} Hören`} />
+            <Head title={`${level.code} — Day ${day.day_number} Listening`} />
 
             <div className="max-w-6xl space-y-6 p-4">
                 <div className="flex items-center justify-between gap-4">
                     <Heading
-                        title={`Day ${day.day_number} — Hören`}
+                        title={`Day ${day.day_number} — Listening`}
                         description={`${level.code} · ${items.length} video${items.length === 1 ? '' : 's'}`}
                     />
 
@@ -100,7 +100,7 @@ ListeningEdit.layout = (props: { level: Level; day: Day }) => ({
             href: days.show([props.level.id, props.day.id]),
         },
         {
-            title: 'Hören',
+            title: 'Listening',
             href: listening.edit([props.level.id, props.day.id]),
         },
     ] satisfies BreadcrumbItem[],

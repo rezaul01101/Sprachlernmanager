@@ -27,11 +27,11 @@ export default function SpeakingIndex({
 }) {
     return (
         <>
-            <Head title={`${level.code} — Sprechen`} />
+            <Head title={`${level.code} — Speaking`} />
 
             <div className="space-y-6 p-4">
                 <Heading
-                    title={`${level.code} — Sprechen`}
+                    title={`${level.code} — Speaking`}
                     description="Choose a day to manage its speaking exercise."
                 />
 
@@ -63,6 +63,6 @@ SpeakingIndex.layout = (props: { level: Level }) => ({
         { title: 'Dashboard', href: dashboard() },
         { title: 'Levels', href: levels.index() },
         { title: props.level.code, href: days.index(props.level.id) },
-        { title: 'Sprechen', href: speaking.index(props.level.id) },
+        { title: 'Speaking', href: speaking.index(props.level.id) },
     ] satisfies BreadcrumbItem[],
 });

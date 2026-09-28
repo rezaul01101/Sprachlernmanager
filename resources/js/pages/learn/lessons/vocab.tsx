@@ -22,7 +22,7 @@ export default function LessonsVocab({
 
     return (
         <>
-            <Head title={`Wortschatz — Tag ${day.day_number}`} />
+            <Head title={`Vocabulary — Day ${day.day_number}`} />
 
             <div className="mx-auto max-w-2xl p-4">
                 <VocabFlashcardDeck cards={vocabCards} onFinish={onFinish} />

@@ -11,11 +11,11 @@ export default function LessonsIndex({ levels }: { levels: LearnLevel[] }) {
 
     return (
         <>
-            <Head title="Lektionen" />
+            <Head title="Lessons" />
 
             <div className="mx-auto max-w-2xl space-y-4 p-4">
                 <p className="text-muted-foreground text-sm">
-                    Wählen Sie Ihr Niveau
+                    Choose your level
                 </p>
 
                 <div className="space-y-4">

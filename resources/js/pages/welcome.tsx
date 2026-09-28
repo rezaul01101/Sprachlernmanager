@@ -14,59 +14,60 @@ import { cn } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
 
 const SKILLS = [
-    { icon: BookMarked, title: 'Wortschatz', done: true },
-    { icon: Headphones, title: 'Hören', done: true },
-    { icon: BookOpen, title: 'Lesen', done: false },
-    { icon: Mic, title: 'Sprechen', done: false },
+    { icon: BookMarked, title: 'Vocabulary', done: true },
+    { icon: Headphones, title: 'Listening', done: true },
+    { icon: BookOpen, title: 'Reading', done: false },
+    { icon: Mic, title: 'Speaking', done: false },
 ];
 
 const FEATURES = [
     {
         icon: BookMarked,
-        title: 'Wortschatz',
-        description: 'Neue Wörter lernen und gezielt wiederholen.',
+        title: 'Vocabulary',
+        description: 'Learn new words and review them with purpose.',
     },
     {
         icon: Headphones,
-        title: 'Hören',
-        description: 'Audio- und Videoübungen für dein Hörverständnis.',
+        title: 'Listening',
+        description:
+            'Audio and video exercises to build your listening comprehension.',
     },
     {
         icon: BookOpen,
-        title: 'Lesen',
-        description: 'Kurztexte, die zu deinem Niveau passen.',
+        title: 'Reading',
+        description: 'Short texts matched to your level.',
     },
     {
         icon: Mic,
-        title: 'Sprechen',
-        description: 'Nachsprechen und Dialoge trainieren.',
+        title: 'Speaking',
+        description: 'Practise repeating phrases and dialogues.',
     },
     {
         icon: Video,
         title: 'Videos',
-        description: 'Kurzvideos, um Deutsch in Aktion zu erleben.',
+        description: 'Short videos to see German in action.',
     },
     {
         icon: Award,
-        title: 'Belohnungen',
-        description: 'Streak halten und Abzeichen für jedes Niveau sammeln.',
+        title: 'Rewards',
+        description: 'Keep your streak going and earn a badge for every level.',
     },
 ];
 
 const STEPS = [
     {
-        title: 'Niveau wählen',
-        description: 'Starte bei A1 oder steig direkt auf deinem Niveau ein.',
+        title: 'Choose your level',
+        description: 'Start at A1 or jump straight in at your own level.',
     },
     {
-        title: 'Täglich üben',
+        title: 'Practise daily',
         description:
-            'Kurze Lektionen zu Wortschatz, Hören, Lesen und Sprechen.',
+            'Short lessons covering vocabulary, listening, reading and speaking.',
     },
     {
-        title: 'Fortschritt sichern',
+        title: 'Lock in your progress',
         description:
-            'Streak halten, Abzeichen sammeln, Level für Level ans Ziel.',
+            'Keep your streak, earn badges, and reach your goal level by level.',
     },
 ];
 
@@ -77,7 +78,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Willkommen" />
+            <Head title="Welcome" />
 
             <div className="bg-background text-foreground min-h-screen">
                 <header className="border-b">
@@ -90,18 +91,16 @@ export default function Welcome() {
                             {auth.user ? (
                                 <Button asChild size="sm">
                                     <Link href={dashboard()}>
-                                        Zum Dashboard
+                                        Go to dashboard
                                     </Link>
                                 </Button>
                             ) : (
                                 <>
                                     <Button asChild variant="ghost" size="sm">
-                                        <Link href={login()}>Anmelden</Link>
+                                        <Link href={login()}>Log in</Link>
                                     </Button>
                                     <Button asChild size="sm">
-                                        <Link href={register()}>
-                                            Registrieren
-                                        </Link>
+                                        <Link href={register()}>Sign up</Link>
                                     </Button>
                                 </>
                             )}
@@ -114,31 +113,31 @@ export default function Welcome() {
                         <div className="grid items-center gap-12 lg:grid-cols-2">
                             <div className="space-y-6">
                                 <span className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-3 py-1 text-xs font-medium">
-                                    🚉 Dein Bahnhof fürs Deutschlernen
+                                    🚉 Your station for learning German
                                 </span>
                                 <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl">
-                                    Nächster Halt:{' '}
+                                    Next stop:{' '}
                                     <span className="text-primary">
-                                        Deutsch.
+                                        German.
                                     </span>
                                 </h1>
                                 <p className="text-muted-foreground max-w-xl text-lg text-pretty">
-                                    Kurze, tägliche Lektionen für Wortschatz,
-                                    Hören, Lesen und Sprechen – Schritt für
-                                    Schritt von A1 bis C1.
+                                    Short, daily lessons for vocabulary,
+                                    listening, reading and speaking — step by
+                                    step from A1 to C1.
                                 </p>
                                 <div className="flex flex-wrap gap-3">
                                     {auth.user ? (
                                         <Button asChild size="lg">
                                             <Link href={dashboard()}>
-                                                Weiter zu deinen Lektionen
+                                                Continue to your lessons
                                             </Link>
                                         </Button>
                                     ) : (
                                         <>
                                             <Button asChild size="lg">
                                                 <Link href={register()}>
-                                                    Kostenlos registrieren
+                                                    Sign up for free
                                                 </Link>
                                             </Button>
                                             <Button
@@ -147,7 +146,7 @@ export default function Welcome() {
                                                 size="lg"
                                             >
                                                 <Link href={login()}>
-                                                    Ich habe bereits ein Konto
+                                                    I already have an account
                                                 </Link>
                                             </Button>
                                         </>
@@ -159,10 +158,10 @@ export default function Welcome() {
                                 <div className="bg-card space-y-4 rounded-2xl border p-5 shadow-lg">
                                     <div className="flex items-center justify-between">
                                         <div className="bg-foreground text-background inline-flex rounded-full px-3 py-1 text-xs font-semibold">
-                                            🔥 5 Tage
+                                            🔥 5 days
                                         </div>
                                         <div className="bg-muted text-primary rounded-full px-2.5 py-1 font-mono text-xs font-bold">
-                                            A1 · Tag 3
+                                            A1 · Day 3
                                         </div>
                                     </div>
                                     <div className="space-y-3">
@@ -201,7 +200,7 @@ export default function Welcome() {
                         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
                             <div className="mb-10 text-center">
                                 <h2 className="text-3xl font-bold tracking-tight">
-                                    So funktioniert&apos;s
+                                    How it works
                                 </h2>
                             </div>
                             <div className="grid gap-8 sm:grid-cols-3">
@@ -229,7 +228,7 @@ export default function Welcome() {
                         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
                             <div className="mb-10 text-center">
                                 <h2 className="text-3xl font-bold tracking-tight">
-                                    Alles, was du zum Lernen brauchst
+                                    Everything you need to learn
                                 </h2>
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -257,11 +256,11 @@ export default function Welcome() {
                         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
                             <div className="mb-10 text-center">
                                 <h2 className="text-3xl font-bold tracking-tight">
-                                    Dein Streckenplan
+                                    Your route map
                                 </h2>
                                 <p className="text-muted-foreground mt-2">
-                                    Fünf Haltestellen von den ersten Wörtern bis
-                                    zum sicheren Gespräch.
+                                    Five stops from your first words to
+                                    confident conversation.
                                 </p>
                             </div>
                             <div className="flex items-center justify-between gap-1 overflow-x-auto pb-2 sm:gap-2">
@@ -292,24 +291,24 @@ export default function Welcome() {
                     <section className="border-t">
                         <div className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
                             <h2 className="text-3xl font-bold tracking-tight">
-                                Bereit für deine erste Lektion?
+                                Ready for your first lesson?
                             </h2>
                             <p className="text-muted-foreground mx-auto mt-2 max-w-xl">
-                                Steig jetzt ein – kostenlos registrieren und
-                                direkt mit Tag 1 starten.
+                                Hop on board now — sign up for free and start
+                                with Day 1 right away.
                             </p>
                             <div className="mt-6 flex flex-wrap justify-center gap-3">
                                 {auth.user ? (
                                     <Button asChild size="lg">
                                         <Link href={dashboard()}>
-                                            Zum Dashboard
+                                            Go to dashboard
                                         </Link>
                                     </Button>
                                 ) : (
                                     <>
                                         <Button asChild size="lg">
                                             <Link href={register()}>
-                                                Kostenlos registrieren
+                                                Sign up for free
                                             </Link>
                                         </Button>
                                         <Button
@@ -317,7 +316,7 @@ export default function Welcome() {
                                             variant="outline"
                                             size="lg"
                                         >
-                                            <Link href={login()}>Anmelden</Link>
+                                            <Link href={login()}>Log in</Link>
                                         </Button>
                                     </>
                                 )}
@@ -336,13 +335,13 @@ export default function Welcome() {
                                 href={login()}
                                 className="hover:text-foreground"
                             >
-                                Anmelden
+                                Log in
                             </Link>
                             <Link
                                 href={register()}
                                 className="hover:text-foreground"
                             >
-                                Registrieren
+                                Sign up
                             </Link>
                         </div>
                     </div>

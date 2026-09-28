@@ -12,7 +12,7 @@ export function VocabReferencePanel({ cards }: { cards: VocabCard[] }) {
                 onClick={() => setVisible((v) => !v)}
                 className="flex w-full items-center justify-between text-sm font-semibold"
             >
-                Vokabeln
+                Vocabulary
                 {visible ? (
                     <EyeOff className="text-muted-foreground size-4" />
                 ) : (
@@ -49,7 +49,7 @@ export function VocabReferencePanel({ cards }: { cards: VocabCard[] }) {
                     </div>
                 ) : (
                     <div className="text-muted-foreground text-xs">
-                        Keine Vokabeln für diesen Tag.
+                        No vocabulary for this day.
                     </div>
                 ))}
         </div>

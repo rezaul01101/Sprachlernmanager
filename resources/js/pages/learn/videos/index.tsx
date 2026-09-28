@@ -9,7 +9,7 @@ export default function LearnVideos() {
 
             <div className="mx-auto max-w-2xl space-y-5 p-4">
                 <p className="text-muted-foreground text-sm">
-                    Kurzvideos zum Üben
+                    Short videos to practice
                 </p>
 
                 {VIDEOS.map((video) => (

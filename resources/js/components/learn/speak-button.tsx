@@ -25,7 +25,7 @@ export function SpeakButton({
             variant="outline"
             size="icon"
             onClick={onPressAudio}
-            aria-label={isPlaying ? 'Stopp' : 'Vorlesen'}
+            aria-label={isPlaying ? 'Stop' : 'Read aloud'}
             className={cn('shrink-0', className)}
         >
             {isPlaying ? (

@@ -429,8 +429,7 @@ export default function ListeningItemsEditor({
                                                                 index,
                                                                 wordIndex,
                                                                 'meaning',
-                                                                e.target
-                                                                    .value,
+                                                                e.target.value,
                                                             )
                                                         }
                                                         placeholder="ID card"
@@ -502,7 +501,7 @@ export default function ListeningItemsEditor({
             </Tabs>
 
             <Button onClick={onSave} disabled={isSaving}>
-                {isSaving ? 'Saving…' : 'Save Hören'}
+                {isSaving ? 'Saving…' : 'Save Listening'}
             </Button>
         </div>
     );

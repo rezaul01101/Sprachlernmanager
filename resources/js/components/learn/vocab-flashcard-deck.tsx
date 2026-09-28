@@ -47,7 +47,7 @@ export function VocabFlashcardDeck({
     if (cards.length === 0) {
         return (
             <div className="text-muted-foreground text-sm">
-                Für diesen Tag sind noch keine Vokabeln verfügbar.
+                No vocabulary available for this day yet.
             </div>
         );
     }
@@ -55,12 +55,12 @@ export function VocabFlashcardDeck({
     if (isDeckComplete) {
         return (
             <div className="flex flex-col items-center gap-6 py-16 text-center">
-                <div className="text-2xl font-bold">Geschafft!</div>
+                <div className="text-2xl font-bold">Done!</div>
                 <div className="text-muted-foreground">
-                    {learnedCount} gelernt · {laterCount} zur Wiederholung
+                    {learnedCount} learned · {laterCount} for review
                 </div>
                 <Button onClick={onFinish} size="lg">
-                    Fertig
+                    Finish
                 </Button>
             </div>
         );
@@ -69,7 +69,7 @@ export function VocabFlashcardDeck({
     return (
         <div className="flex flex-col items-center gap-6">
             <div className="text-muted-foreground font-mono text-sm">
-                {cards.length - index} Karten übrig
+                {cards.length - index} cards left
             </div>
 
             <button
@@ -106,7 +106,7 @@ export function VocabFlashcardDeck({
                     </div>
                 ) : (
                     <div className="text-muted-foreground mt-4 text-sm">
-                        Zum Aufdecken tippen
+                        Tap to reveal
                     </div>
                 )}
             </button>
@@ -115,7 +115,7 @@ export function VocabFlashcardDeck({
                 <button
                     type="button"
                     onClick={() => advance('later')}
-                    aria-label="Später"
+                    aria-label="Later"
                     className="border-destructive text-destructive bg-card flex size-14 items-center justify-center rounded-full border-2"
                 >
                     <X className="size-6" />
@@ -123,7 +123,7 @@ export function VocabFlashcardDeck({
                 <button
                     type="button"
                     onClick={() => advance('learned')}
-                    aria-label="Gelernt"
+                    aria-label="Learned"
                     className="bg-card flex size-14 items-center justify-center rounded-full border-2 border-emerald-600 text-emerald-600"
                 >
                     <Check className="size-6" />

@@ -9,20 +9,17 @@ import type { LearnLevel } from '@/types/learn';
 export default function LearnProgress({ levels }: { levels: LearnLevel[] }) {
     return (
         <>
-            <Head title="Fortschritt" />
+            <Head title="Progress" />
 
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="flex gap-3">
                     <StatChip label="Streak" value={STATS.streak} />
-                    <StatChip label="Wörter" value={STATS.words} />
-                    <StatChip
-                        label="Genauigkeit"
-                        value={`${STATS.accuracy}%`}
-                    />
+                    <StatChip label="Words" value={STATS.words} />
+                    <StatChip label="Accuracy" value={`${STATS.accuracy}%`} />
                 </div>
 
                 <div className="space-y-3">
-                    <h2 className="font-semibold">Niveau-Fortschritt</h2>
+                    <h2 className="font-semibold">Level progress</h2>
                     {levels.map((level) => {
                         const pct =
                             level.days_count > 0
@@ -46,7 +43,7 @@ export default function LearnProgress({ levels }: { levels: LearnLevel[] }) {
                 </div>
 
                 <div className="space-y-3">
-                    <h2 className="font-semibold">Letzte 4 Wochen</h2>
+                    <h2 className="font-semibold">Last 4 weeks</h2>
                     <HeatmapGrid
                         cells={HEATMAP_CELLS}
                         dayInitials={HEATMAP_DAY_INITIALS}

@@ -29,12 +29,12 @@ export default function LessonsReading({
 
     return (
         <>
-            <Head title={`Lesen — Tag ${day.day_number}`} />
+            <Head title={`Reading — Day ${day.day_number}`} />
 
             <div className="mx-auto max-w-2xl space-y-5 p-4">
                 <div className="rounded-xl bg-rose-50 p-4 dark:bg-rose-950/30">
                     <div className="text-primary mb-1 text-xs font-semibold">
-                        Aufgabe
+                        Task
                     </div>
                     <p className="text-sm">{readingItem.instruction}</p>
                 </div>
@@ -58,13 +58,13 @@ export default function LessonsReading({
                         rel="noopener noreferrer"
                         className="text-primary text-sm underline underline-offset-4"
                     >
-                        Artikel öffnen
+                        Open article
                     </a>
                 )}
 
                 {hasWords && (
                     <div className="space-y-2">
-                        <div className="text-sm font-semibold">Wortschatz</div>
+                        <div className="text-sm font-semibold">Vocabulary</div>
                         {readingItem.words.map((word, index) => (
                             <div
                                 key={index}
@@ -92,7 +92,7 @@ export default function LessonsReading({
                 )}
 
                 <Button size="lg" className="w-full" onClick={onComplete}>
-                    Abschnitt abschließen
+                    Complete section
                 </Button>
             </div>
         </>

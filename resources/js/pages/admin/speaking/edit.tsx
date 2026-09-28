@@ -262,11 +262,11 @@ export default function SpeakingEdit({
 
     return (
         <>
-            <Head title={`${level.code} — Day ${day.day_number} Sprechen`} />
+            <Head title={`${level.code} — Day ${day.day_number} Speaking`} />
 
             <div className="max-w-3xl space-y-6 p-4">
                 <Heading
-                    title={`Day ${day.day_number} — Sprechen`}
+                    title={`Day ${day.day_number} — Speaking`}
                     description={level.code}
                 />
 
@@ -454,7 +454,7 @@ export default function SpeakingEdit({
                     </Tabs>
 
                     <Button onClick={onSave} disabled={isSaving}>
-                        {isSaving ? 'Saving…' : 'Save Sprechen'}
+                        {isSaving ? 'Saving…' : 'Save Speaking'}
                     </Button>
                 </div>
             </div>
@@ -502,7 +502,7 @@ SpeakingEdit.layout = (props: { level: Level; day: Day }) => ({
             href: days.show([props.level.id, props.day.id]),
         },
         {
-            title: 'Sprechen',
+            title: 'Speaking',
             href: speaking.edit([props.level.id, props.day.id]),
         },
     ] satisfies BreadcrumbItem[],

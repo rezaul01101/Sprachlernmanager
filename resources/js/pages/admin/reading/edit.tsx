@@ -211,11 +211,11 @@ export default function ReadingEdit({
 
     return (
         <>
-            <Head title={`${level.code} — Day ${day.day_number} Lesen`} />
+            <Head title={`${level.code} — Day ${day.day_number} Reading`} />
 
             <div className="max-w-3xl space-y-6 p-4">
                 <Heading
-                    title={`Day ${day.day_number} — Lesen`}
+                    title={`Day ${day.day_number} — Reading`}
                     description={level.code}
                 />
 
@@ -437,7 +437,7 @@ export default function ReadingEdit({
                     </Tabs>
 
                     <Button onClick={onSave} disabled={isSaving}>
-                        {isSaving ? 'Saving…' : 'Save Lesen'}
+                        {isSaving ? 'Saving…' : 'Save Reading'}
                     </Button>
                 </div>
             </div>
@@ -484,6 +484,9 @@ ReadingEdit.layout = (props: { level: Level; day: Day }) => ({
             title: `Day ${props.day.day_number}`,
             href: days.show([props.level.id, props.day.id]),
         },
-        { title: 'Lesen', href: reading.edit([props.level.id, props.day.id]) },
+        {
+            title: 'Reading',
+            href: reading.edit([props.level.id, props.day.id]),
+        },
     ] satisfies BreadcrumbItem[],
 });

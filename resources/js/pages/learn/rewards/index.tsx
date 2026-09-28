@@ -8,19 +8,16 @@ import type { LearnLevel } from '@/types/learn';
 export default function LearnRewards({ levels }: { levels: LearnLevel[] }) {
     return (
         <>
-            <Head title="Belohnung" />
+            <Head title="Rewards" />
 
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="flex gap-3">
                     <StatChip label="Streak" value={STATS.streak} />
-                    <StatChip label="Wörter" value={STATS.words} />
-                    <StatChip
-                        label="Genauigkeit"
-                        value={`${STATS.accuracy}%`}
-                    />
+                    <StatChip label="Words" value={STATS.words} />
+                    <StatChip label="Accuracy" value={`${STATS.accuracy}%`} />
                 </div>
 
-                <h2 className="font-semibold">Niveau-Abzeichen</h2>
+                <h2 className="font-semibold">Level badges</h2>
 
                 <div className="space-y-3">
                     {levels.map((level) => {
@@ -50,10 +47,10 @@ export default function LearnRewards({ levels }: { levels: LearnLevel[] }) {
                                     </div>
                                     <div className="text-muted-foreground text-xs">
                                         {level.status === 'done'
-                                            ? `Niveau ${level.code} abgeschlossen`
+                                            ? `Level ${level.code} completed`
                                             : level.status === 'current'
-                                              ? `Niveau ${level.code} in Arbeit`
-                                              : `Niveau ${level.code} gesperrt`}
+                                              ? `Level ${level.code} in progress`
+                                              : `Level ${level.code} locked`}
                                     </div>
                                 </div>
                             </div>

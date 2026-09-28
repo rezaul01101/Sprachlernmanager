@@ -25,14 +25,14 @@ export default function LessonsSpeaking({
 
     return (
         <>
-            <Head title={`Sprechen — Tag ${day.day_number}`} />
+            <Head title={`Speaking — Day ${day.day_number}`} />
 
             <div className="mx-auto flex max-w-2xl flex-col gap-5 p-4">
                 <SpeakingDialoguePane dialogue={speakingItem.dialogue} />
 
                 {hasWords && (
                     <div className="space-y-2">
-                        <div className="text-sm font-semibold">Wortschatz</div>
+                        <div className="text-sm font-semibold">Vocabulary</div>
                         {speakingItem.words.map((word, index) => (
                             <div
                                 key={index}
@@ -55,7 +55,7 @@ export default function LessonsSpeaking({
                 )}
 
                 <Button size="lg" className="w-full" onClick={onComplete}>
-                    Abschnitt abschließen
+                    Complete section
                 </Button>
             </div>
         </>

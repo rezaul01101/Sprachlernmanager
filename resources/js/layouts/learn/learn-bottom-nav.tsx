@@ -16,15 +16,15 @@ import type { NavItem } from '@/types';
 const bottomNavItems: (NavItem & { matchStartsWith?: boolean })[] = [
     { title: 'Home', href: dashboard(), icon: HomeIcon },
     {
-        title: 'Lektionen',
+        title: 'Lessons',
         href: learn.lessons.index(),
         icon: GraduationCap,
         matchStartsWith: true,
     },
     { title: 'Videos', href: learn.videos(), icon: Video },
-    { title: 'Belohnung', href: learn.rewards(), icon: Award },
-    { title: 'Fortschritt', href: learn.progress(), icon: TrendingUp },
-    { title: 'Profil', href: learn.profile(), icon: UserIcon },
+    { title: 'Rewards', href: learn.rewards(), icon: Award },
+    { title: 'Progress', href: learn.progress(), icon: TrendingUp },
+    { title: 'Profile', href: learn.profile(), icon: UserIcon },
 ];
 
 export function LearnBottomNav() {

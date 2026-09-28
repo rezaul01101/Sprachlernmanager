@@ -27,7 +27,7 @@ export default function LessonsListening({
 
     return (
         <>
-            <Head title={`Hören — Tag ${day.day_number}`} />
+            <Head title={`Listening — Day ${day.day_number}`} />
 
             <div className="mx-auto max-w-2xl space-y-5 p-4">
                 <ListeningItemsPlayer

@@ -18,7 +18,7 @@ export default function LearnHome({
     completionSummary: CompletionSummary | null;
 }) {
     const { auth } = usePage().props;
-    const firstName = auth.user?.name?.trim().split(' ')[0] || 'Lerner';
+    const firstName = auth.user?.name?.trim().split(' ')[0] || 'Learner';
 
     if (!currentLevel || !currentDayNumber || !progress || !completionSummary) {
         return (
@@ -26,16 +26,13 @@ export default function LearnHome({
                 <Head title="Home" />
                 <div className="mx-auto max-w-2xl space-y-4 p-4 text-center">
                     <h1 className="text-2xl font-bold">
-                        Willkommen, {firstName}!
+                        Welcome, {firstName}!
                     </h1>
                     <p className="text-muted-foreground">
-                        Es sind noch keine Niveaus verfügbar. Schau bald wieder
-                        vorbei.
+                        No levels available yet. Check back soon.
                     </p>
                     <Button asChild>
-                        <Link href={learn.lessons.index()}>
-                            Lektionen ansehen
-                        </Link>
+                        <Link href={learn.lessons.index()}>View lessons</Link>
                     </Button>
                 </div>
             </>
@@ -52,33 +49,33 @@ export default function LearnHome({
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="space-y-3 rounded-2xl border p-5">
                     <div className="bg-foreground text-background inline-flex rounded-full px-3 py-1 text-xs font-semibold">
-                        🔥 {STATS.streak} Tage
+                        🔥 {STATS.streak} days
                     </div>
                     <div>
                         <h1 className="text-2xl font-bold">
-                            Willkommen,{' '}
+                            Welcome,{' '}
                             <span className="text-primary">{firstName}!</span>{' '}
                             👋
                         </h1>
                         <p className="text-muted-foreground mt-1 text-sm">
-                            Lass uns heute Deutsch üben.
+                            Let's practice German today.
                         </p>
                     </div>
                 </div>
 
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold">Heutige Übung</h2>
+                        <h2 className="font-semibold">Today's practice</h2>
                         <div className="bg-muted text-primary rounded-full px-2.5 py-1 font-mono text-xs font-bold">
-                            {currentLevel.code} · Tag {currentDayNumber}
+                            {currentLevel.code} · Day {currentDayNumber}
                         </div>
                     </div>
 
                     <div className="space-y-3">
                         <PracticeCard
                             icon={BookMarked}
-                            title="Wortschatz"
-                            subtitle="Neue Wörter lernen"
+                            title="Vocabulary"
+                            subtitle="Learn new words"
                             done={progress.wortschatz}
                             href={
                                 hasContent('wortschatz')
@@ -91,8 +88,8 @@ export default function LearnHome({
                         />
                         <PracticeCard
                             icon={Headphones}
-                            title="Hören"
-                            subtitle="Audio oder Video"
+                            title="Listening"
+                            subtitle="Audio or video"
                             done={progress.hoeren}
                             href={
                                 hasContent('hoeren')
@@ -105,8 +102,8 @@ export default function LearnHome({
                         />
                         <PracticeCard
                             icon={BookOpen}
-                            title="Lesen"
-                            subtitle="Kurztext verstehen"
+                            title="Reading"
+                            subtitle="Understand a short text"
                             done={progress.lesen}
                             href={
                                 hasContent('lesen')
@@ -119,8 +116,8 @@ export default function LearnHome({
                         />
                         <PracticeCard
                             icon={Mic}
-                            title="Sprechen"
-                            subtitle="Nachsprechen & Dialog"
+                            title="Speaking"
+                            subtitle="Repeat & dialogue"
                             done={progress.sprechen}
                             href={
                                 hasContent('sprechen')

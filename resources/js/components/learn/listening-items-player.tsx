@@ -18,7 +18,7 @@ export function ListeningItemsPlayer({
     if (items.length === 0) {
         return (
             <div className="text-muted-foreground text-sm">
-                Für diesen Tag ist noch kein Hörmaterial verfügbar.
+                No listening material available for this day yet.
             </div>
         );
     }
@@ -40,7 +40,7 @@ export function ListeningItemsPlayer({
                         size="icon"
                         disabled={index === 0}
                         onClick={() => setIndex((i) => Math.max(0, i - 1))}
-                        aria-label="Vorheriges Video"
+                        aria-label="Previous video"
                     >
                         <ChevronLeft className="size-4" />
                     </Button>
@@ -51,7 +51,7 @@ export function ListeningItemsPlayer({
                         onClick={() =>
                             setIndex((i) => Math.min(items.length - 1, i + 1))
                         }
-                        aria-label="Nächstes Video"
+                        aria-label="Next video"
                     >
                         <ChevronRight className="size-4" />
                     </Button>
@@ -76,7 +76,7 @@ export function ListeningItemsPlayer({
                     {hasScript && (
                         <div>
                             <div className="mb-2 text-sm font-semibold">
-                                Transkript
+                                Transcript
                             </div>
                             <p className="text-sm leading-relaxed">
                                 {current.script}
@@ -111,7 +111,7 @@ export function ListeningItemsPlayer({
             )}
 
             <Button size="lg" className="w-full" onClick={onComplete}>
-                Abschnitt abschließen
+                Complete section
             </Button>
         </div>
     );
