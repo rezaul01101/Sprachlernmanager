@@ -1,7 +1,12 @@
-import { Head, router } from '@inertiajs/react';
+import { Form, Head, router } from '@inertiajs/react';
+import { useRef } from 'react';
+import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { dashboard } from '@/routes';
 import users from '@/routes/admin/users';
 import type { BreadcrumbItem } from '@/types/navigation';
@@ -15,7 +20,15 @@ type User = {
     created_at: string;
 };
 
-export default function UserShow({ user }: { user: User }) {
+export default function UserShow({
+    user,
+    passwordRules,
+}: {
+    user: User;
+    passwordRules: string;
+}) {
+    const passwordInput = useRef<HTMLInputElement>(null);
+
     const onRevokeTokens = () => {
         if (
             confirm(
@@ -69,6 +82,66 @@ export default function UserShow({ user }: { user: User }) {
                 >
                     Revoke all tokens
                 </Button>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                    <Heading
+                        variant="small"
+                        title="Change password"
+                        description={`Set a new password for ${user.name}.`}
+                    />
+
+                    <Form
+                        {...UserController.updatePassword.form(user.id)}
+                        options={{ preserveScroll: true }}
+                        resetOnSuccess
+                        resetOnError={['password', 'password_confirmation']}
+                        onError={(errors) => {
+                            if (errors.password) {
+                                passwordInput.current?.focus();
+                            }
+                        }}
+                        className="space-y-4"
+                    >
+                        {({ errors, processing }) => (
+                            <>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password">
+                                        New password
+                                    </Label>
+                                    <PasswordInput
+                                        id="password"
+                                        ref={passwordInput}
+                                        name="password"
+                                        autoComplete="new-password"
+                                        placeholder="New password"
+                                        passwordrules={passwordRules}
+                                    />
+                                    <InputError message={errors.password} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password_confirmation">
+                                        Confirm password
+                                    </Label>
+                                    <PasswordInput
+                                        id="password_confirmation"
+                                        name="password_confirmation"
+                                        autoComplete="new-password"
+                                        placeholder="Confirm password"
+                                        passwordrules={passwordRules}
+                                    />
+                                    <InputError
+                                        message={errors.password_confirmation}
+                                    />
+                                </div>
+
+                                <Button disabled={processing}>
+                                    Change password
+                                </Button>
+                            </>
+                        )}
+                    </Form>
+                </div>
             </div>
         </>
     );

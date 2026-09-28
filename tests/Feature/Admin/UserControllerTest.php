@@ -51,4 +51,45 @@ class UserControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
+
+    public function test_admin_can_change_a_users_password()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $learner = User::factory()->create();
+        $originalPassword = $learner->password;
+
+        $response = $this->actingAs($admin)->put(route('admin.users.update-password', $learner), [
+            'password' => 'new-secret-password',
+            'password_confirmation' => 'new-secret-password',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertNotSame($originalPassword, $learner->fresh()->password);
+    }
+
+    public function test_changing_a_users_password_requires_confirmation()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $learner = User::factory()->create();
+
+        $response = $this->actingAs($admin)->put(route('admin.users.update-password', $learner), [
+            'password' => 'new-secret-password',
+            'password_confirmation' => 'does-not-match',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+    }
+
+    public function test_non_admin_cannot_change_a_users_password()
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+        $learner = User::factory()->create();
+
+        $response = $this->actingAs($user)->put(route('admin.users.update-password', $learner), [
+            'password' => 'new-secret-password',
+            'password_confirmation' => 'new-secret-password',
+        ]);
+
+        $response->assertForbidden();
+    }
 }
