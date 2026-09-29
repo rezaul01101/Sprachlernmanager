@@ -79,3 +79,22 @@ export type CompletionSummary = {
     doneCount: number;
     isDayComplete: boolean;
 };
+
+export type ReferenceTopic = 'alphabet' | 'numbers' | 'weekdays' | 'months';
+
+export type ReferenceEntry = {
+    display: string;
+    spoken: string;
+    pronounce: string;
+    meaning: string | null;
+};
+
+export type GrammarSummary = {
+    id: number;
+    title: string;
+    image_url: string | null;
+};
+
+export type GrammarDetail = GrammarSummary & {
+    description: string | null;
+};

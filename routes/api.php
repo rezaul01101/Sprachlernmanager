@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DayController;
+use App\Http\Controllers\Api\GrammarController;
 use App\Http\Controllers\Api\LevelController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,9 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
+
+        Route::get('/grammars', [GrammarController::class, 'index']);
+        Route::get('/grammars/{grammar}', [GrammarController::class, 'show']);
 
         Route::get('/levels', [LevelController::class, 'index']);
         Route::post('/levels/{code}/enroll', [LevelController::class, 'enroll']);

@@ -2,6 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { BookMarked, BookOpen, Headphones, Mic } from 'lucide-react';
 import { PracticeCard } from '@/components/learn/practice-card';
 import { Button } from '@/components/ui/button';
+import { REFERENCE_TILES } from '@/data/learn/reference';
 import { STATS } from '@/data/learn/stats';
 import learn from '@/routes/learn';
 import type { CompletionSummary, DayProgress, LearnLevel } from '@/types/learn';
@@ -128,6 +129,39 @@ export default function LearnHome({
                                     : undefined
                             }
                         />
+                    </div>
+                </div>
+
+                <div className="space-y-3">
+                    <h2 className="font-semibold">Useful lists</h2>
+                    <div className="grid grid-cols-2 gap-3">
+                        {REFERENCE_TILES.map((tile) => (
+                            <Link
+                                key={tile.topic}
+                                href={learn.reference.url(tile.topic)}
+                                className="bg-card hover:bg-muted rounded-2xl border-2 p-4 transition-colors"
+                            >
+                                <div className="mb-2 text-2xl">
+                                    {tile.emoji}
+                                </div>
+                                <div className="text-sm font-semibold">
+                                    {tile.title}
+                                </div>
+                                <div className="text-muted-foreground mt-0.5 text-xs">
+                                    {tile.subtitle}
+                                </div>
+                            </Link>
+                        ))}
+                        <Link
+                            href={learn.grammar.index()}
+                            className="bg-card hover:bg-muted rounded-2xl border-2 p-4 transition-colors"
+                        >
+                            <div className="mb-2 text-2xl">📖</div>
+                            <div className="text-sm font-semibold">Grammar</div>
+                            <div className="text-muted-foreground mt-0.5 text-xs">
+                                Rules & examples
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>
